@@ -1,18 +1,84 @@
-My stated goals at the beginning of the course were to get better at planning
-my writing and doing it in stages. Unfortunately, at least in this course, I've
-not improved a lot. I'd like to blame my other studies for taking up so much
-time, but I am at fault too for not planning my time better. I've usually
-written my text only on the deadline date, and sometimes I've cut it
-uncomfortably close. So scheduling is something I definitely still have to work
-on, probably something like allocating a certain day for writing.
+\setcounter{secnumdepth}{0}
 
-I have however learned something else; Understanding scientific texts better
-and reading them more efficiently. Especially the ``3 passes'' method has been
-very useful.
+\section{Answers to presented questions}
 
-The next stage of my learning will be the course's stage 7, where we write a
-longer text. This time scheduling and planning is crucial, so I hope I can
-muster some effort to plan properly. I am planning to allocate some days per
-week to fully focus on writing, so that I can work the text more gradually,
-which should result in less stress for me and a better text.
+\subsection{A. Briefly explain about ‘homography (plane projective
+transformation)’, and ‘homography matrix’.  What is the DoF (degree of freedom)
+of a homography matrix?}
 
+Homography maps points in the plane of the real world to points on the image
+plane. The homography matrix describes this mapping, and it can be used to
+translate world coordinates to image coordinates. This can be done by simply
+multiplying the image coordinates with the matrix.
+
+% explain this better maybe
+The degrees of freedom of a homography matrix is given by the count of elements
+that are unknown, or free to change. The homography matrix has the form
+\(3\times3\), and one of those elements is the scale constant 1, so we have
+\(3\times3-1=8\) degrees of freedom.
+
+\subsection{B. What is the difference between ‘region detectors’ and ‘region
+descriptors’?}
+
+A region detector detects simple features in an image. These simple features
+are often edges or corners, places where the intensity gradient is large.
+A region descriptor takes these detected features, and tries to group them. The
+purpose of region descriptors is to make the feature detection more robust to
+scale, orientation and intensity changes.
+
+\subsection{C. What is the difference between ‘Harris-Laplace’ and
+‘Harris-affine’ region detectors? And, what is the difference between ‘Harris-’
+and ‘Hessian-’ region detectors?}
+%   i. You may find some hints in the following paper - [2] Tuytelaars et al.,
+%   “Local invariant feature detectors: A survey”, Computer graphics and
+%   vision, 2008.
+`Harris-Laplace' is a scale invariant corner detector, `Harris-affine' is
+an affine invariant detector.
+`Harris-' detectors detect corners, `Hessian-' detectors detect blobs.
+
+\subsection{D. Write the definition of ‘repeatability rate’, which is defined in
+the paper [1]. Briefly explain about the method of measuring a repeatability
+rate from a pair of images.}
+
+The `repeatability rate´ is the percentage of detected points simultaneously
+present in two images. The repeatability rate is of course the better the
+higher it is, since more correctly detected shared features makes for better
+matching.
+
+The repeatability rate can be calculated by dividing the number of points
+repeated in both images by the total number of detected points.
+
+\subsection{E. What is the ground truth for measuring ‘recall’ and ‘1-precision’
+in [1]?}
+
+% Recall is computed with respect to the number of corresponding regions and
+% 1-precision with respect to the total number of matches.
+
+The ground truth is gotten by manually selecting corresponding regions from
+different images of the same scene.
+
+\subsection{F. Write the mathematical expressions of calculating ‘recall’, and
+‘1-precision’ in [1], along with brief explanations.}
+
+The mathematical expression for calculating recall is shown in~\ref{eq:recall}.
+\#correspondences is the number of manually selected points that are
+present in both images. \#correct matches is the number of correspondenses made
+by the descriptors that match the manually selected correspondences.
+\begin{equation}
+  recall = \frac{\#correct\ matches}{\#correspondences}
+  \label{eq:recall}
+\end{equation}
+
+The mathematical expression for calculating 1-precision is shown
+in~\ref{eq:1-precision}. 
+\begin{equation}
+  1-precision = \frac{\#false\ matches}{\#correct\ matches + \#false\ matches}
+  \label{eq:1-precision}
+\end{equation}
+
+\subsection{G. There are three typical matching strategies for descriptor
+matching (4.1.1 in [1]). Explain each matching strategy, i.e., threshold-based,
+nearest neighbor-based, and distance ratio of nearest neighbors.}
+
+\subsection{H. Briefly explain about the dataset for evaluation, which is
+provided in [1] with six types.}
