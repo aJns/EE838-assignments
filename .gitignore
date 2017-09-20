@@ -1,3 +1,7 @@
+# vim
+*.swp
+
+# latex
 *.aux
 *.bbl
 *.bcf
@@ -5,3 +9,6 @@
 *.log
 *.out
 *.run.xml
+
+# output
+assignment.pdf
