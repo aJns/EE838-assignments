@@ -70,7 +70,9 @@ by the descriptors that match the manually selected correspondences.
 \end{equation}
 
 The mathematical expression for calculating 1-precision is shown
-in~\ref{eq:1-precision}. 
+in~\ref{eq:1-precision}. The \#correct matches variable is the amount of
+detected matches that are the same as the ground truth, and \#false matches are
+the matches that aren't the same.
 \begin{equation}
   1-precision = \frac{\#false\ matches}{\#correct\ matches + \#false\ matches}
   \label{eq:1-precision}
@@ -80,5 +82,52 @@ in~\ref{eq:1-precision}.
 matching (4.1.1 in [1]). Explain each matching strategy, i.e., threshold-based,
 nearest neighbor-based, and distance ratio of nearest neighbors.}
 
+With a \textbf{threshold-based} matching strategy, the regions are matched if
+the distance of their descriptors is below a certain threshold. A region can
+have several matches.
+
+A \textbf{nearest neighbor-based} matching strategy matches the regions which
+are closest to each other, as long as the distance between is also below a set
+threshold. Using this strategy a region only has one match.
+
+In a \textbf{distance ratio of nearest neighbors} strategy the closest
+descriptors are also matched, but only if the ratio of the distance to the
+closest descriptor divided by the distance to the second closest descriptor is
+below a threshold.
+
 \subsection{H. Briefly explain about the dataset for evaluation, which is
 provided in [1] with six types.}
+
+The dataset contains six types of image pairs:
+\begin{enumerate}
+
+  \item Rotated pairs, where the other image is a rotated version of the first
+    one.
+
+  \item Rotated and zoomed pairs, where the zoom level also differs.
+
+  \item Pairs where the viewpoint changes, ie.\ the other image is taken from
+    another position.
+
+  \item Pairs where the other image is blurred.
+
+  \item JPEG compression on one image
+
+  \item Light change pairs, ie.\ pairs where one image has a lower intensity
+    than the other.
+
+\end{enumerate}
+The images are also of different types of scenes; Structured scenes with clear
+objects and regions, and scenes of repeated textures.
+
+
+
+
+
+
+
+
+
+
+
+
