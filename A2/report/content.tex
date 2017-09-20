@@ -130,8 +130,35 @@ scene, or the camera position does not vary.
 the first two lines indicate?  For each line after the 3rd one, what are the
 components?}
 
+The first two lines describe the size of the data in the file. The first line
+is the number of columns, the second the number of rows.
+
+Each line after the 3rd one is a descriptor for a region. The first two
+components are the center x and y coordinates of the ellipse. The following
+three components are the ellipse parameters that define the region. The rest
+are descriptor invariants.
+
 \subsection{2. Analyze the differences among the three matching strategies
 based on the experimental results.}
+
+(This analysis is based on the results of the matlab code)
+
+Both nearest neighbor based strategies had 998 ground truth matches.
+The nearest neighbor based strategies functioned quite similarly, they had the
+exact same number of correct matches, 756. However, the distance ratio
+thresholded nn strategy had fewer total matches, 1758 compared to 2050 of the
+normal nn. The distance ratio nn has a recall rate of 75.8\%, which is the
+same for the normal nn. The distance ratio nn has a 1-precision rate of
+57.0\%, and the normal nn has a rate of 63.1\%.
+
+The threshold based strategy had 3685 ground truth matches. It had a total of
+74711 matches, of which 2339 were correct. This means it had a recall rate of
+63.5\%, and a 1-precision rate of 96.9\%.
+
+In conclusion, the distance ratio nearest neighbor strategy seems to be the
+best, with the same recall rate as the normal nn, but with a better 1-precision
+rate. The simple threshold based strategy is worse than both the nearest
+neighbor strategies.
 
 
 
