@@ -12,3 +12,6 @@
 
 # output
 assignment.pdf
+
+# matlab
+*.m~
