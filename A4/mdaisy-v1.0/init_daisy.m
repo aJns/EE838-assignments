@@ -91,6 +91,7 @@ for r=1:cn
         sigma=sqrt( csigma(r)^2 - csigma(r-1)^2 );
         dzy.CL(:,:,:,r) = smooth_layers(dzy.CL(:,:,:,r-1), sigma);
     end
+    figure,imshow(10*dzy.CL(:,:,3,r));
 end
 time_cc = toc;
 fprintf(1,' is done in %f secs\n',time_cc);

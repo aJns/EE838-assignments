@@ -20,8 +20,8 @@ descriptor1 = display_descriptor(dzy1, 200, 200);
 pre_dzy1 = init_daisy(image1, R, RQ, TQ, HQ, SI, LI, NT);
 
 %%
-image2 = imread(fullfile(imageFolder, 'grasshopper.jpg'));
-image2 = rgb2gray(image2);
+image1 = imread(fullfile(imageFolder, 'grasshopper.jpg'));
+image1 = rgb2gray(image1);
 %figure; imshow(image2);
 
 %%
