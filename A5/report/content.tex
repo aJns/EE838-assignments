@@ -1,0 +1,57 @@
+
+\section{Algorithm explanation}
+
+\subsection{AKAZE}
+
+AKAZE is an \textbf{Accelerated} version of KAZE\@. It's faster because it builds
+it's nonlinear scale space representation using a mathematic framework called
+Fast Explicit Diffusion. It has the following steps:
+\begin{easylist}[tractatus]
+
+# Building a Nonlinear Scale Space with Fast Explicit Diffusion
+
+## We first need the contrast factor \(\lambda\), which we get from an
+algorithm defined in the AKAZE paper. That algorithm uses a gaussian smoothed
+input image.
+
+## The next step is to run the FED cycles, which are explicit diffusion schemes
+with varying time steps.
+
+### In AKAZE, the FED scheme is embedded in a fine to coarse pyramidal approach
+which increases computation speed and results in a set of filtered images.
+
+# Feature Detection
+
+## Compute the determinant of Hessian using the set of filtered images obtained
+from the previous step.
+
+# Feature Description
+
+## AKAZE uses a Modified-Local Difference Binary (M-LDB) descriptor. 
+
+### The descriptor uses gradient and intensity information from the nonlinear
+scale space.
+
+\end{easylist}
+
+\subsection{LIOP}
+
+\begin{easylist}
+
+\end{easylist}
+
+\subsection{OIOP}
+
+\begin{easylist}
+
+\end{easylist}
+
+\section{Answers to given questions}
+
+\begin{itemize}
+  \item \textbf{Explain the difference between SIFT and A-KAZE for detecting local
+    maxima.}
+  \item \textbf{Explain the difference between LIOP and OIOP descriptors.}
+  \item \textbf{As we can see in (2), LIOP descriptor is rotation-invariant by
+    itself.  Explain the technical reason of the property.}
+\end{itemize}
