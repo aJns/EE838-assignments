@@ -201,6 +201,132 @@ illumination conditions
     \sum_{j\in\mathcal{N}_i} (F(x_i;\omega) - F(x_j;\omega))^2
 \]
 
+\subsection{RANSAC}
+
+RANSAC iteration count
+\[
+    N = \frac{\log(1-p)}{\log(1-(1-\epsilon)^s)}
+\]
+p = success rate, prob that at least one sample has no outliers \\
+\(\epsilon\) = outlier ration \\
+s = sample size, line 2, circle 3
+
+Error, or orthogonal distance between point and line
+\[
+    d_i = \frac{\lvert ax_i -y_i + b \rvert}{\sqrt{a^2 + 1^2}}
+\]
+
+Circle equation
+\[
+    (x-a)^2 + (y-b)^2 = r^2
+\]
+circle error
+\[
+    d_i = \lvert\sqrt{(x_i-a)^2 + (y_i -b)^2}-r\rvert
+\]
+
+\section{Algorithm evaluation criteria}
+
+\begin{description}
+    \item [Repeatability]
+        The geometric stability of detected interests points between different
+        images of the given scene under varying conditions --- Detect the same
+        point independently in both images
+    \item [Distinctiveness/informativeness]
+        If all descriptors lie close together, their information content is
+        low. Spread out descriptors have more information content. --- reliable
+        matching of corresponding point
+    \item [Localization accuracy]
+        How accurately an interest point can be located at a specific 2D
+        location. --- where exactly is the point
+\end{description}
+
+Recall and precision:
+\[
+    \text{recall} = \frac{\lvert\text{\{relevant
+    documents\}}\cap\text{\{retrieved documents\}}\rvert}
+    {\lvert\text{\{relevant documents\}}\rvert}
+\]
+\[
+    \text{precision} = \frac{\lvert\text{\{relevant
+    documents\}}\cap\text{\{retrieved documents\}}\rvert}
+    {\lvert\text{\{retrieved documents\}}\rvert}
+\]
+
+\section{Algorithm steps}
+
+\subsection{Harris}
+\begin{enumerate}
+    \item Compute x and y derivatives of image
+    \item Compute products of derivatives at every pixel
+    \item Compute the sums of the products of derivatives at each pixel
+    \item Define at each pixel the Hessian matrix
+    \item Compute the response of the detector at each pixel
+    \item Threshold on value of R. Compute nonmax suppression.
+\end{enumerate}
+
+\subsection{SIFT}
+\begin{enumerate}
+    \item 
+Search for potential points of interest by creation of a
+Difference of Gaussian (DoG) scale-space pyramid as image
+representation and filtering for extreme values.
+
+    \item
+Further filtering and reduction of the obtained points from 1. to
+select stable points with high contrast. To each remaining
+point, its position and size are assigned.
+
+    \item
+Orientation assignment to each point by finding a characteristic
+direction.
+
+    \item
+Feature vector calculation based on the characteristic direction
+from 3. to provide rotation invariance.
+
+    \item
+The whole process is stacked in a way that only a subset of
+elements from the beginning of a stage is passed onto the next
+stage.
+
+\end{enumerate}
+
+\subsection{SURF}
+\begin{enumerate}
+    \item Find image interest points --- Use determinant of Hessian matrix
+    \item Find Major interest points in scale space --- Non-maximum suppression
+        on scaled interest point maps
+    \item Find feature ``direction'' -- We want rotationally invariant features
+    \item Generate feature vectors
+
+\end{enumerate}
+
+\subsection{DAISY}
+Mostly differs in its sampling pattern, which consists of concentric circles.
+
+\subsection{Binary descriptors}
+The point of binary descriptors is to describe the feature with a series of
+pixel pairs around the keypoint. If we have 512 pairs, we usually get a 512 bit
+binary string. The values of the string are gotten by comparing the pairs; For
+example, if we compare intensity gradients, the value is 1 if the second
+pixel's gradient is lower, and 0 if it is higher, or something like that.
+
+\begin{description}
+    \item [BRIEF] Random sampling pairs
+    \item [ORB] Orientation calculation using moments, learned sampling pairs
+    \item [BRISK] Sampling pattern is concentric circles, with more points on
+        outer rings. Orientation calc by comparing gradients of long pairs.
+        Sampling pairs are only short pairs.
+    \item [FREAK] Overlapping concentric circles with more points on the inner
+        rings. Orientation calc by comparing gradients of preselected 45 pairs.
+        Learned sampling pairs.
+\end{description}
+
+\subsection{Advanced methods}
+Non-linear scale space --- Intensity Order Pooling --- Using multiple scales --
+learned descriptors, DNN or trad\. machine learning.
+
 
 
 
