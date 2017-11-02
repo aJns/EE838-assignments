@@ -53,7 +53,7 @@ for i=1:nb_points
     end
 end
 
-test_data = [x y];
+test_data = [x; y]';
 
 clearvars a b r x y
 
@@ -61,27 +61,40 @@ clearvars a b r x y
 %% Estimate model with RANSAC
 
 % variables
-% probability that at least one sample has no outliers: 9.99%
-% s = sample size, 2 because a line can be modeled with 2 points
+% probability that at least one sample has no outliers: 99.9%
+% s = sample size, 3 because a line can be modeled with 3 points
 no_outlier_prob = 0.999;
-sample_size = 2;
+sample_size = 3;
 nb_iterations = log(1-no_outlier_prob)./log(1-inlier_ratios.^sample_size);
 
 % Because we have 4 thresholds, and 4 ratios, I assume we are going to estimate
 % the line 4 times.
 
-a_best = zeros(4, 1);
-b_best = zeros(4, 1);
+est_count = length(nb_iterations);
 
-for i=1:length(nb_iterations)
+a_best = zeros(est_count, 1);
+b_best = zeros(est_count, 1);
+r_best = zeros(est_count, 1);
+
+for i=1:est_count
     best_count = 0;
     for j=1:nb_iterations(i)
-        line_index = randi([1 200], 2, 1);
+        line_index = randi([1 200], sample_size, 1);
         x = test_data(line_index, 1);
         y = test_data(line_index, 2);
 
-        a = (y(2)-y(1))/(x(2)-x(1));
-        b = y(1)-x(1)*( (y(2)-y(1)) / (x(2)-x(1)) );
+        m12 = (y(2) - y(1))/(x(2) - x(1));
+        m23 = (y(3) - y(2))/(x(3) - x(2));
+
+        x12 = (x(1) + x(2))/2;
+        y12 = (y(1) + y(2))/2;
+
+        x23 = (x(2) + x(3))/2;
+        y23 = (y(2) + y(3))/2;
+
+        a = ( m12*m23*(y23-y12)+m12*x23-m23*x12 ) / ( m12-m23 );
+        b = (-1/m12)*(a-x12)-y12;
+        r = sqrt( (x(1)-a)^2 + (y(1)-b)^2 );
 
         threshold = inlier_th(i);
         current_count = 0;
@@ -91,7 +104,7 @@ for i=1:length(nb_iterations)
         for k=1:length(test_data)
             x = test_data(k,1);
             y = test_data(k,2);
-            d = abs(a*x - y + b)/sqrt(a^2 + 1^2);
+            d = abs(sqrt( (x-a)^2  + (y-b)^2 ) -r );
             if d < threshold
                 current_count = current_count + 1;
             end
@@ -101,6 +114,7 @@ for i=1:length(nb_iterations)
             best_count = current_count;
             a_best(i) = a;
             b_best(i) = b;
+            r_best(i) = r;
         end
     end
 end
@@ -109,15 +123,17 @@ end
 
 %% plotting the resulting line approximations
 
-x = linspace(-50, 50);
-y = a_best*x + b_best;
+
+ang=linspace(0, 2*pi, nb_points);
+x=r_best(1)*cos(ang) + a_best(1);
+y=r_best(1)*sin(ang) + b_best(1);
 
 close all;
 figure;
 
 plot(test_data(:,1), test_data(:,2), 'o');
 hold on;
-plot(x, y, '--');
+plot(x, y);
 hold off;
 
 
