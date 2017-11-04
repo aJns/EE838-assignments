@@ -51,18 +51,7 @@ for i=1:est_count
         [a, b, r] = approx_model(x, y);
 
         threshold = inlier_th(i);
-        current_count = 0;
-
-        clearvars x y
-
-        for k=1:length(test_data)
-            x = test_data(k,1);
-            y = test_data(k,2);
-            d = abs(sqrt( (x-a)^2  + (y-b)^2 ) -r );
-            if d < threshold
-                current_count = current_count + 1;
-            end
-        end
+        current_count = count_inliers(test_data, [a b r], threshold);
 
         if current_count > best_count
             best_count = current_count;
@@ -79,8 +68,8 @@ end
 
 
 ang=linspace(0, 2*pi, nb_points);
-x=r_best(1)*cos(ang) + a_best(1);
-y=r_best(1)*sin(ang) + b_best(1);
+x=(r_best*cos(ang) + a_best)';
+y=(r_best*sin(ang) + b_best)';
 
 close all;
 figure;

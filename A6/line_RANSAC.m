@@ -47,18 +47,7 @@ for i=1:length(nb_iterations)
         [a, b] = approx_model(x, y);
 
         threshold = inlier_th(i);
-        current_count = 0;
-
-        clearvars x y
-
-        for k=1:length(test_data)
-            x = test_data(k,1);
-            y = test_data(k,2);
-            d = abs(a*x - y + b)/sqrt(a^2 + 1^2);
-            if d < threshold
-                current_count = current_count + 1;
-            end
-        end
+        current_count = count_inliers(test_data, [a b], threshold);
 
         if current_count > best_count
             best_count = current_count;
