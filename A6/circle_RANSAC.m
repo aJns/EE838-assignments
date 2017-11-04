@@ -20,28 +20,30 @@ for i=0:temp_length - 2
 end
 
 % circle model
-a = 1.24;
-b = 0.76;
-r = 7.11;
+a = 0;
+b = 0;
+r = 15;
 
 ang=linspace(0, 2*pi, nb_points);
 x=r*cos(ang) + a;
 y=r*sin(ang) + b;
 
-variance = [-20, 20];
+variance = [-5, 5];
 
 for i=1:nb_points
     while 1
         temp_x = x(i) + (variance(2)-variance(1))*rand(1, 1) + variance(1);
         temp_y = y(i) + (variance(2)-variance(1))*rand(1, 1) + variance(1);
 
-        d = abs(sqrt( (x(i)-a)^2  + (y(i)-b)^2 ) -r );
+        d = abs(sqrt( (temp_x-a)^2  + (temp_y-b)^2 ) -r );
 
         point_okay = 0;
         for j=1:length(inlier_th)
-            if d < inlier_th(j) && nb_inside_th(j) > 0
-                nb_inside_th(j) = nb_inside_th(j) - 1;
-                point_okay = 1;
+            if d < inlier_th(j)
+                if nb_inside_th(j) > 0
+                    nb_inside_th(j) = nb_inside_th(j) - 1;
+                    point_okay = 1;
+                end
                 break;
             end
         end
