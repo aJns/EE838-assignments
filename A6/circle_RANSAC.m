@@ -12,52 +12,15 @@ range = [-50, 50];
 inlier_th = [0.5, 1, 2, 5, 99];
 inlier_ratios = [0.3, 0.5, 0.7, 0.9];
 
-nb_inside_th = nb_points * [inlier_ratios 1];
-
-temp_length = length(nb_inside_th);
-for i=0:temp_length - 2
-    nb_inside_th(temp_length - i) = nb_inside_th(temp_length - i) - nb_inside_th(temp_length - 1 - i);
-end
-
 % circle model
 a = 0;
 b = 0;
 r = 15;
+circle_model = [a b r];
 
-ang=linspace(0, 2*pi, nb_points);
-x=r*cos(ang) + a;
-y=r*sin(ang) + b;
+test_data = generate_data(nb_points, range, inlier_th, inlier_ratios, circle_model);
 
-variance = [-5, 5];
-
-for i=1:nb_points
-    while 1
-        temp_x = x(i) + (variance(2)-variance(1))*rand(1, 1) + variance(1);
-        temp_y = y(i) + (variance(2)-variance(1))*rand(1, 1) + variance(1);
-
-        d = abs(sqrt( (temp_x-a)^2  + (temp_y-b)^2 ) -r );
-
-        point_okay = 0;
-        for j=1:length(inlier_th)
-            if d < inlier_th(j)
-                if nb_inside_th(j) > 0
-                    nb_inside_th(j) = nb_inside_th(j) - 1;
-                    point_okay = 1;
-                end
-                break;
-            end
-        end
-        if point_okay == 1
-            x(i) = temp_x;
-            y(i) = temp_y;
-            break;
-        end
-    end
-end
-
-test_data = [x; y]';
-
-clearvars a b r x y
+clearvars a b r
 
 
 %% Estimate model with RANSAC
