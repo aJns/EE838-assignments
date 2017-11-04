@@ -34,8 +34,9 @@ nb_iterations = log(1-no_outlier_prob)./log(1-inlier_ratios.^sample_size);
 % Because we have 4 thresholds, and 4 ratios, I assume we are going to estimate
 % the line 4 times.
 
-a_best = zeros(4, 1);
-b_best = zeros(4, 1);
+mi = 1;
+a_best = zeros(4, 3);
+b_best = zeros(4, 3);
 
 for i=1:length(nb_iterations)
     best_count = 0;
@@ -51,8 +52,8 @@ for i=1:length(nb_iterations)
 
         if current_count > best_count
             best_count = current_count;
-            a_best(i) = a;
-            b_best(i) = b;
+            a_best(i, mi) = a;
+            b_best(i, mi) = b;
         end
     end
 end
@@ -60,17 +61,19 @@ end
 
 
 %% plotting the resulting line approximations
-
-x = linspace(-50, 50);
-y = a_best*x + b_best;
-
 close all;
-figure;
 
-plot(test_data(:,1), test_data(:,2), 'o');
-hold on;
-plot(x, y, '--');
-hold off;
+for mi=1:3
+    x = linspace(-50, 50);
+    y = a_best(:, mi)*x + b_best(:, mi);
+
+    figure;
+
+    plot(test_data(:,1), test_data(:,2), 'o');
+    hold on;
+    plot(x, y, '--');
+    hold off;
+end
 
 
 
