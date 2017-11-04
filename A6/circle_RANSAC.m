@@ -27,7 +27,7 @@ clearvars a b r
 
 % variables
 % probability that at least one sample has no outliers: 99.9%
-% s = sample size, 3 because a line can be modeled with 3 points
+% s = sample size, 3 because a circle can be modeled with 3 points
 no_outlier_prob = 0.999;
 sample_size = 3;
 nb_iterations = log(1-no_outlier_prob)./log(1-inlier_ratios.^sample_size);
@@ -44,22 +44,11 @@ r_best = zeros(est_count, 1);
 for i=1:est_count
     best_count = 0;
     for j=1:nb_iterations(i)
-        line_index = randi([1 200], sample_size, 1);
+        line_index = randi([1 length(test_data)], sample_size, 1);
         x = test_data(line_index, 1);
         y = test_data(line_index, 2);
 
-        m12 = (y(2) - y(1))/(x(2) - x(1));
-        m23 = (y(3) - y(2))/(x(3) - x(2));
-
-        x12 = (x(1) + x(2))/2;
-        y12 = (y(1) + y(2))/2;
-
-        x23 = (x(2) + x(3))/2;
-        y23 = (y(2) + y(3))/2;
-
-        a = ( m12*m23*(y23-y12)+m12*x23-m23*x12 ) / ( m12-m23 );
-        b = (-1/m12)*(a-x12)-y12;
-        r = sqrt( (x(1)-a)^2 + (y(1)-b)^2 );
+        [a, b, r] = approx_model(x, y);
 
         threshold = inlier_th(i);
         current_count = 0;

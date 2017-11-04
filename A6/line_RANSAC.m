@@ -40,12 +40,11 @@ b_best = zeros(4, 1);
 for i=1:length(nb_iterations)
     best_count = 0;
     for j=1:nb_iterations(i)
-        line_index = randi([1 200], 2, 1);
+        line_index = randi([1 length(test_data)], sample_size, 1);
         x = test_data(line_index, 1);
         y = test_data(line_index, 2);
 
-        a = (y(2)-y(1))/(x(2)-x(1));
-        b = y(1)-x(1)*( (y(2)-y(1)) / (x(2)-x(1)) );
+        [a, b] = approx_model(x, y);
 
         threshold = inlier_th(i);
         current_count = 0;
