@@ -54,6 +54,12 @@ for i=1:nb_points
             x(i) = temp_x;
             y(i) = temp_y;
             break;
+        else
+            if nb_inside_th(end) > 0
+                nb_inside_th(end) = nb_inside_th(end) - 1;
+                x(i) = temp_x;
+                y(i) = temp_y;
+                break;
         end
     end
 end

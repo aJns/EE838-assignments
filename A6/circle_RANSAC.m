@@ -9,7 +9,7 @@
 
 nb_points = 200;
 range = [-50, 50];
-inlier_th = [0.5, 1, 2, 5, 99];
+inlier_th = [0.5, 1, 2, 5];
 inlier_ratios = [0.3, 0.5, 0.7, 0.9];
 
 % circle model
