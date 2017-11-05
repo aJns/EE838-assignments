@@ -21,6 +21,36 @@ approximation. Each of these algorithms is run 16 times; Once for each dataset.
 \section{Effect of parameters on RANSAC performance}
 
 The parameters we are varying are the ratio of inliers in the dataset, and the
-inlier threshold ratio.
+inlier ratio.
+
+The ratio of inliers seems to be have the biggest effect on processing time and
+performance, mostly because it has a big effect on the number of iterations.
+The higher the ratio, the less iterations there are, which is of course faster,
+but also way more unstable. For example, with a ratio of 90\% inliers, there's
+only 5 iterations. In this case, RANSAC approximation can be very bad. The mean
+squared error of these approximated models compared to the ground truth can
+easily be in the hundreds (>100).
+
+RANSAC functions worse than usual on all the 90\% inlier data sets, but it has
+problems especially with the 0.5 threshold. This seems counter-intuitive,
+considering that in the data set in question, the points are located most
+closely to the ground truth model. Perhaps the few outliers that do exist in
+that data set have an exaggerated effect.
+
+\section{Processing time vs.\ performance}
+
+% TODO: do this last, because it might require adding more code. Which I'm
+% not going to do until I absolutely have to.
+
+\section{Problems with RANSAC}
+
+The main problem with RANSAC is its iterative and random nature; It's not
+guaranteed to find an optimal, or even a good solution. That is why it's
+important to ensure that the number of iterations is enough to find a workable
+solution. It's also not a deterministic algorithm, which is obvious considering
+the random sampling.
+
+It can also be difficult to find good threshold and probability parameters for
+a specific problem.
 
 \section{Comparison of the RANSAC algorithms}
