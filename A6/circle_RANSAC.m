@@ -49,52 +49,46 @@ for i=1:est_count
         x = test_data(line_index, 1);
         y = test_data(line_index, 2);
 
-        [a, b, r] = approx_model(x, y);
+        model = approx_model(x, y);
 
         threshold = inlier_th(i);
-        current_count = count_inliers(test_data, [a b r], threshold);
+        current_count = count_inliers(test_data, model, threshold);
 
         if current_count > best_count
             best_count = current_count;
-            a_best(i, mi) = a;
-            b_best(i, mi) = b;
-            r_best(i, mi) = r;
+            a_best(i, mi) = model(1);
+            b_best(i, mi) = model(2);
+            r_best(i, mi) = model(3);
         end
     end
 end
 
 
-%% MSAC
+%% R-RANSAC
 
 mi = 2;
 for i=1:est_count
     best_count = 0;
-    preval_inlier_th = min(nb_iterations(i)/(nb_iterations(i)+50), 0.25);
     threshold = inlier_th(i);
-    preval_sample_size = 20;
 
     for j=1:nb_iterations(i)
         circle_index = randi([1 length(test_data)], sample_size, 1);
         x = test_data(circle_index, 1);
         y = test_data(circle_index, 2);
 
-        [a, b, r] = approx_model(x, y);
+        model = approx_model(x, y);
         
-        preval_index = randi([1 length(test_data)], preval_sample_size, 1);
-        preval_count = count_inliers(test_data(preval_index,:), [a b r], threshold);
-        if (preval_count / preval_sample_size) < preval_inlier_th
+        if ~passed_preval(test_data, nb_iterations(i), model, threshold)
             continue
-        else
-            disp(['Preval passed. Th:' num2str(threshold) ' Inliers:' num2str(preval_count)]);
         end
 
-        current_count = count_inliers(test_data, [a b r], threshold);
+        current_count = count_inliers(test_data, model, threshold);
 
         if current_count > best_count
             best_count = current_count;
-            a_best(i, mi) = a;
-            b_best(i, mi) = b;
-            r_best(i, mi) = r;
+            a_best(i, mi) = model(1);
+            b_best(i, mi) = model(2);
+            r_best(i, mi) = model(3);
         end
     end
 end

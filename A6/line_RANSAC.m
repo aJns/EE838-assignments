@@ -45,19 +45,47 @@ for i=1:length(nb_iterations)
         x = test_data(line_index, 1);
         y = test_data(line_index, 2);
 
-        [a, b] = approx_model(x, y);
+        model = approx_model(x, y);
 
         threshold = inlier_th(i);
-        current_count = count_inliers(test_data, [a b], threshold);
+        current_count = count_inliers(test_data, model, threshold);
 
         if current_count > best_count
             best_count = current_count;
-            a_best(i, mi) = a;
-            b_best(i, mi) = b;
+            a_best(i, mi) = model(1);
+            b_best(i, mi) = model(2);
         end
     end
 end
 
+
+%% R-RANSAC
+
+mi = 2;
+for i=1:length(nb_iterations)
+    best_count = 0;
+    threshold = inlier_th(i);
+
+    for j=1:nb_iterations(i)
+        line_index = randi([1 length(test_data)], sample_size, 1);
+        x = test_data(line_index, 1);
+        y = test_data(line_index, 2);
+
+        model = approx_model(x, y);
+        
+        if ~passed_preval(test_data, nb_iterations(i), model, threshold)
+            continue
+        end
+
+        current_count = count_inliers(test_data, model, threshold);
+
+        if current_count > best_count
+            best_count = current_count;
+            a_best(i, mi) = model(1);
+            b_best(i, mi) = model(2);
+        end
+    end
+end
 
 
 %% plotting the resulting line approximations
