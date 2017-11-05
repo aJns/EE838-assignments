@@ -3,30 +3,24 @@
 The test data is generated around a manually chosen ground truth model (line or circle).
 I've generated the following data set for testing:
 \begin{itemize}
-  \item 200 data points in the range of x = [-50, 50]
-  \item These data points are divided into 4 bins
-    \begin{itemize}
-      \item \%30 of the points are within a distance of 0.5 of the ground truth
-        model
-      \item \%50 within a distance of 1
-      \item \%70 within a distance of 2
-      \item \%90 within a distance of 5
-      \item and the rest within a distance of 99
-    \end{itemize}
-  \item The circle and line models (naturally) use different test data sets
+  \item As there's 4 different inlier ratios, and 4 different thresholds, I've
+    created 16 different data sets per model.
+  \item Each sets holds 200 data points in the range of x = [-50, 50].
+  \item The given ratio of data points is inside the given threshold. The rest
+    are scattered randomly.
+  \item The circle and line models (naturally) use different test data sets, so
+    there's 32 data sets in total. The different algorithms use the same data.
 \end{itemize}
 
 \section{Testing procedure}
 
 I've implemented the RANSAC algorithm for the line and circle models. I've also
 implemented the bonus algorithms R-RANSAC and MSAC, both for line and circle
-approximation. Each of these algorithms is run 4 times; Once for each given
-threshold value
-\(
-  \begin{bmatrix} 0.5 & 1 & 2 & 5 \end{bmatrix}
-\)
+approximation. Each of these algorithms is run 16 times; Once for each dataset.
 
 \section{Effect of parameters on RANSAC performance}
 
-The RANSAC threshold is the parameter which seems to have the greatest impact
-on approximation accuracy. 
+The parameters we are varying are the ratio of inliers in the dataset, and the
+inlier threshold ratio.
+
+\section{Comparison of the RANSAC algorithms}
