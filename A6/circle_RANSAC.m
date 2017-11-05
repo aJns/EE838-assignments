@@ -94,6 +94,32 @@ for i=1:est_count
 end
 
 
+%% MSAC
+
+mi=3;
+
+for i=1:length(nb_iterations)
+    best_score = 0;
+    for j=1:nb_iterations(i)
+        line_index = randi([1 length(test_data)], sample_size, 1);
+        x = test_data(line_index, 1);
+        y = test_data(line_index, 2);
+
+        model = approx_model(x, y);
+
+        threshold = inlier_th(i);
+        current_score = calc_msac_score(test_data, model, threshold);
+
+        if current_score > best_score
+            best_score = current_score;
+            a_best(i, mi) = model(1);
+            b_best(i, mi) = model(2);
+            r_best(i, mi) = model(3);
+        end
+    end
+end
+
+
 %% plotting the resulting line approximations
 close all;
 
