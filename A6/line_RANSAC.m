@@ -124,8 +124,9 @@ for mi=1:3
 
     plot(test_data(:,1), test_data(:,2), 'o');
     hold on;
-    plot(x, y, '--');
+    plot(x, y);
     hold off;
+    legend('test data', num2str(inlier_th(1)), num2str(inlier_th(2)), num2str(inlier_th(3)),num2str(inlier_th(4)));
 end
 
 

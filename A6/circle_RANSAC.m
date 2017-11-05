@@ -134,6 +134,7 @@ for mi=1:3
     hold on;
     plot(x, y);
     hold off;
+    legend('test data', num2str(inlier_th(1)), num2str(inlier_th(2)), num2str(inlier_th(3)),num2str(inlier_th(4)));
 end
 
 
