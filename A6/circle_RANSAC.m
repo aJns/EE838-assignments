@@ -162,8 +162,8 @@ mse_results = zeros(nb_th, nb_rt, 3);
 for mi=1:3
     for i=1:nb_th
         for j=1:nb_rt
-            approx_model = [a_best(i, j, mi) b_best(i, j, mi) r_best(i, j, mi)];
-            mse_results(i, j, mi) = compare_ground_truth(ground_truth, approx_model);
+            model = [a_best(i, j, mi) b_best(i, j, mi) r_best(i, j, mi)];
+            mse_results(i, j, mi) = compare_ground_truth(ground_truth, model);
         end
     end
 end
