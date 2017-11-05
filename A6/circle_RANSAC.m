@@ -99,7 +99,7 @@ mi=3;
 
 for i=1:length(inlier_th)
     for j=1:length(inlier_ratios)
-        best_count = 0;
+        best_score = 0;
         nb_iterations = log(1-no_outlier_prob)/log(1-inlier_ratios(j)^sample_size);
         for k=1:nb_iterations
             line_index = randi([1 size(test_data, 1)], sample_size, 1);
@@ -111,40 +111,12 @@ for i=1:length(inlier_th)
             threshold = inlier_th(i);
             current_score = calc_msac_score(test_data(:,:,i,j), model, threshold);
 
-            if current_count > best_count
-                best_count = current_count;
+            if current_score > best_score
+                best_score = current_score;
                 a_best(i, j, mi) = model(1);
                 b_best(i, j, mi) = model(2);
                 r_best(i, j, mi) = model(3);
             end
-        end
-    end
-end
-
-
-%% plotting the resulting line approximations
-close all;
-
-nb_th = length(inlier_th);
-nb_rt = length(inlier_ratios);
-
-for mi=1:3
-    figure;
-    counter = 1;
-    for i=1:nb_th
-        for j=1:nb_rt
-
-    ang=linspace(0, 2*pi, nb_points);
-    x=(r_best(i,j,mi)*cos(ang) + a_best(i,j,mi))';
-    y=(r_best(i,j,mi)*sin(ang) + b_best(i,j,mi))';
-
-            subplot(nb_th, nb_rt, counter)
-            plot(test_data(:,1,i,j), test_data(:,2,i,j), 'o');
-            hold on;
-            plot(x, y);
-            hold off;
-            title([ 'threshold:' num2str(inlier_th(i)) ' ratio:' num2str(inlier_ratios(j)) ]);
-            counter = counter + 1;
         end
     end
 end
@@ -156,6 +128,9 @@ end
 % each column the same ratio of inliers
 
 ground_truth = circle_model;
+
+nb_th = length(inlier_th);
+nb_rt = length(inlier_ratios);
 
 mse_results = zeros(nb_th, nb_rt, 3);
 
@@ -173,6 +148,31 @@ csvwrite('circle_mse_RANSAC.csv', mse_results(:,:,mi));
 csvwrite('circle_mse_R-RANSAC.csv', mse_results(:,:,mi));
 
 csvwrite('circle_mse_MSAC.csv', mse_results(:,:,mi));
+
+
+%% plotting the resulting line approximations
+close all;
+
+for mi=1:3
+    figure;
+    counter = 1;
+    for i=1:nb_th
+        for j=1:nb_rt
+
+            ang=linspace(0, 2*pi, nb_points);
+            x=(r_best(i,j,mi)*cos(ang) + a_best(i,j,mi))';
+            y=(r_best(i,j,mi)*sin(ang) + b_best(i,j,mi))';
+
+            subplot(nb_th, nb_rt, counter)
+            plot(test_data(:,1,i,j), test_data(:,2,i,j), 'o');
+            hold on;
+            plot(x, y);
+            hold off;
+            title([ 'threshold:' num2str(inlier_th(i)) ' ratio:' num2str(inlier_ratios(j)) ' mse:' num2str(mse_results(i,j,mi)) ]);
+            counter = counter + 1;
+        end
+    end
+end
 
 
 
