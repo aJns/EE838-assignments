@@ -32,31 +32,11 @@ no_outlier_prob = 0.999;
 sample_size = 3;
 
 mi = 1;
-a_best = zeros(length(inlier_th), length(inlier_ratios), 3);
-b_best = zeros(length(inlier_th), length(inlier_ratios), 3);
-r_best = zeros(length(inlier_th), length(inlier_ratios), 3);
+best_model = zeros(sample_size, length(inlier_th), length(inlier_ratios), 3);
 
 for i=1:length(inlier_th)
     for j=1:length(inlier_ratios)
-        best_count = 0;
-        nb_iterations = log(1-no_outlier_prob)/log(1-inlier_ratios(j)^sample_size);
-        for k=1:nb_iterations
-            line_index = randi([1 size(test_data, 1)], sample_size, 1);
-            x = test_data(line_index, 1, i, j);
-            y = test_data(line_index, 2, i, j);
-
-            model = approx_model(x, y);
-
-            threshold = inlier_th(i);
-            current_count = count_inliers(test_data(:,:,i,j), model, threshold);
-
-            if current_count > best_count
-                best_count = current_count;
-                a_best(i, j, mi) = model(1);
-                b_best(i, j, mi) = model(2);
-                r_best(i, j, mi) = model(3);
-            end
-        end
+        best_model(:, i, j, mi) = calc_RANSAC_model(test_data(:,:,i,j), sample_size, no_outlier_prob, inlier_th(i), inlier_ratios(j));
     end
 end
 
@@ -66,29 +46,7 @@ end
 mi = 2;
 for i=1:length(inlier_th)
     for j=1:length(inlier_ratios)
-        best_count = 0;
-        nb_iterations = log(1-no_outlier_prob)/log(1-inlier_ratios(j)^sample_size);
-        for k=1:nb_iterations
-            line_index = randi([1 size(test_data, 1)], sample_size, 1);
-            x = test_data(line_index, 1, i, j);
-            y = test_data(line_index, 2, i, j);
-
-            model = approx_model(x, y);
-            threshold = inlier_th(i);
-
-            if ~passed_preval(test_data(:,:,i,j), nb_iterations, model, threshold)
-                continue
-            end
-
-            current_count = count_inliers(test_data(:,:,i,j), model, threshold);
-
-            if current_count > best_count
-                best_count = current_count;
-                a_best(i, j, mi) = model(1);
-                b_best(i, j, mi) = model(2);
-                r_best(i, j, mi) = model(3);
-            end
-        end
+        best_model(:, i, j, mi) = calc_R_RANSAC_model(test_data(:,:,i,j), sample_size, no_outlier_prob, inlier_th(i), inlier_ratios(j));
     end
 end
 
@@ -99,25 +57,7 @@ mi=3;
 
 for i=1:length(inlier_th)
     for j=1:length(inlier_ratios)
-        best_score = 0;
-        nb_iterations = log(1-no_outlier_prob)/log(1-inlier_ratios(j)^sample_size);
-        for k=1:nb_iterations
-            line_index = randi([1 size(test_data, 1)], sample_size, 1);
-            x = test_data(line_index, 1, i, j);
-            y = test_data(line_index, 2, i, j);
-
-            model = approx_model(x, y);
-
-            threshold = inlier_th(i);
-            current_score = calc_msac_score(test_data(:,:,i,j), model, threshold);
-
-            if current_score > best_score
-                best_score = current_score;
-                a_best(i, j, mi) = model(1);
-                b_best(i, j, mi) = model(2);
-                r_best(i, j, mi) = model(3);
-            end
-        end
+        best_model(:, i, j, mi) = calc_MSAC_model(test_data(:,:,i,j), sample_size, no_outlier_prob, inlier_th(i), inlier_ratios(j));
     end
 end
 
@@ -137,7 +77,7 @@ mse_results = zeros(nb_th, nb_rt, 3);
 for mi=1:3
     for i=1:nb_th
         for j=1:nb_rt
-            model = [a_best(i, j, mi) b_best(i, j, mi) r_best(i, j, mi)];
+            model = best_model(:,i,j,mi);
             mse_results(i, j, mi) = compare_ground_truth(ground_truth, model);
         end
     end
@@ -159,14 +99,18 @@ for mi=1:3
     for i=1:nb_th
         for j=1:nb_rt
 
+            a = best_model(1, i, j, mi);
+            b = best_model(2, i, j, mi);
+            r = best_model(3, i, j, mi);
+
             ang=linspace(0, 2*pi, nb_points);
-            x=(r_best(i,j,mi)*cos(ang) + a_best(i,j,mi))';
-            y=(r_best(i,j,mi)*sin(ang) + b_best(i,j,mi))';
+            x=r*cos(ang) + a;
+            y=r*sin(ang) + b;
 
             subplot(nb_th, nb_rt, counter)
             plot(test_data(:,1,i,j), test_data(:,2,i,j), 'o');
             hold on;
-            plot(x, y);
+            plot(x', y');
             hold off;
             title([ 'threshold:' num2str(inlier_th(i)) ' ratio:' num2str(inlier_ratios(j)) ' mse:' num2str(mse_results(i,j,mi)) ]);
             counter = counter + 1;
