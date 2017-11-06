@@ -1,3 +1,6 @@
+% Most of the actual logic is in the various functions, this just calls them.
+
+
 % B: RANSAC for circle fitting
 % model: (x-a)^2 + (y-b)^2 = r^2
 
@@ -68,8 +71,13 @@ for i=1:length(inlier_th)
 end
 run_times(mi) = toc;
 
-all_run_times = all_run_times + run_times;
-run_time_counter = run_time_counter + 1;
+if exist('all_run_times', 'var') == 0
+    all_run_times = run_times;
+    run_time_counter = 1;
+else
+    all_run_times = all_run_times + run_times;
+    run_time_counter = run_time_counter + 1;
+end
 
 avg_runtimes = all_run_times/run_time_counter;
 

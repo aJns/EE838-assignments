@@ -1,3 +1,6 @@
+% Counts the number of inliers from the test data, using the model, according
+% to the set threshold
+
 function nb_inliers = count_inliers(test_data, model, threshold)
 
 current_count = 0;

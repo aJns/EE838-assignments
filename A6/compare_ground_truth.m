@@ -1,18 +1,26 @@
+% This function calculates the MSE from the ground truth model to the RANSAC
+% approximated model. Very useful for assessing RANSAC performance.
+
 function mean_squared_error = compare_ground_truth(ground_truth, approx_model)
 
+% line
 if length(ground_truth) == 2
+    % get model params
     a_truth = ground_truth(1);
     b_truth = ground_truth(2);
 
     a_approx = approx_model(1);
     b_approx = approx_model(2);
 
+    % calculate the actual points
     x = linspace(0, 100);
     y_truth = a_truth*x + b_truth;
     y_approx = a_approx*x + b_approx;
 
+    % error!
     mean_squared_error = immse(y_truth, y_approx);
 
+    % circle
 else
     a_truth = ground_truth(1);
     b_truth = ground_truth(2);

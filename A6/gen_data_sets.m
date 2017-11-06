@@ -1,5 +1,8 @@
+% Generates multiple data sets
+
 function test_data = gen_data_sets(nb_points, range, inlier_th, inlier_ratios, model)
 
+% Save all the test data sets to the same matrix, for convenience
 test_data = zeros(nb_points, 2, length(inlier_th), length(inlier_ratios));
 
 for i=1:length(inlier_th)

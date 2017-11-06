@@ -95,7 +95,9 @@ R-RANSAC is however a lot less accurate. Especially in situations, where there
 aren't any good models to find, R-RANSAC can discard the tolerable ones,
 leaving it only with the worst models. If we calculate the mean squared error
 of the different algorithms in relation to the ground truth model, R-RANSAC has
-an error value of over 3 times that of vanilla RANSAC\@.
+an error value of over 3 times that of vanilla RANSAC\@. This is intuitive,
+because R-RANSAC introduces further random elements in the pre-evaluation
+stage.
 
 MSAC performs overall slightly better than RANSAC, but it seems to be
 especially performant in data sets with a low number of inliers, ie.\ the 30\%

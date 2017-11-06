@@ -1,8 +1,11 @@
+% This calculates the distance of points to the model
+
 function d = calc_error(point, model)
 
 x = point(1);
 y = point(2);
 
+% length == 2, line. otherwise assume circle
 if length(model) == 2
     a = model(1);
     b = model(2);

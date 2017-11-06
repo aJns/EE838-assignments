@@ -1,3 +1,6 @@
+% This function calculates the model using the R-RANSAC algorithm. Otherwise
+% the same as normal RANSAC, but it contains the pre-evaluation test.
+
 function best_model = calc_R_RANSAC_model(test_data, sample_size, no_outlier_prob, inlier_th, inlier_ratio)
 
 best_model = zeros(sample_size, 1);

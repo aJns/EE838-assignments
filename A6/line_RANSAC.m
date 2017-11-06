@@ -1,3 +1,5 @@
+% Most of the actual logic is in the various functions, this just calls them.
+
 %A: RANSAC for line fitting
 % model: y = ax + b
 
