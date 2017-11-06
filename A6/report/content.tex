@@ -46,8 +46,7 @@ sampling bad points, resulting in a bad approximation.
 \begin{figure}[H]
   \centering
   \includegraphics[width=1\linewidth]{circles_RANSAC}
-  \caption{RANSAC approximated circle models, with different data sets.}
-\label{fig:circles_RANSAC}
+  \caption{RANSAC approximated circle models, with different data sets.}\label{fig:circles_RANSAC}
 \end{figure}
 
 Although the data sets with 30\% of inliers have a lot of iterations, ie.\
@@ -72,8 +71,7 @@ RANSAC accuracy, the 90\% probability of finding an inlier seems to be optimal.
   \centering
   \includegraphics[width=0.8\linewidth]{performance-plot}
   \caption{Plot of the iteration count function, with sample size 3, and an
-  inlier ratio of 50\%.}
-\label{fig:performance-plot}
+  inlier ratio of 50\%.}\label{fig:performance-plot}
 \end{figure}
 
 \section{Problems with RANSAC}
@@ -86,3 +84,26 @@ the random sampling.  It can also be difficult to find good threshold and
 probability parameters for a specific problem.
 
 \section{Comparison of the RANSAC algorithms}
+
+Comparing running times, R-RANSAC is clearly faster than both RANSAC and MSAC\@.
+Taking an average of \(>10\) runs, R-RANSAC takes usually 0.06s, RANSAC 0.14s and
+MSAC 0.13s. As can be seen, maybe surprisingly MSAC performs slightly faster
+than vanilla RANSAC\@. In general, all algorithms seemed to be very stable in
+their runtimes.
+
+R-RANSAC is however a lot less accurate. Especially in situations, where there
+aren't any good models to find, R-RANSAC can discard the tolerable ones,
+leaving it only with the worst models. If we calculate the mean squared error
+of the different algorithms in relation to the ground truth model, R-RANSAC has
+an error value of over 3 times that of vanilla RANSAC\@.
+
+MSAC performs overall slightly better than RANSAC, but it seems to be
+especially performant in data sets with a low number of inliers, ie.\ the 30\%
+inlier set, where it results in much better models than vanilla RANSAC\@.
+
+
+
+
+
+
+

@@ -23,7 +23,7 @@ test_data = gen_data_sets(nb_points, range, inlier_th, inlier_ratios, circle_mod
 clearvars a b r
 
 
-%% Estimate model with RANSAC
+%Estimate model with RANSAC
 
 % variables
 % probability that at least one sample has no outliers: 99.9%
@@ -33,34 +33,47 @@ sample_size = 3;
 
 mi = 1;
 best_model = zeros(sample_size, length(inlier_th), length(inlier_ratios), 3);
+run_times = zeros(3, 1);
 
+tic;
 for i=1:length(inlier_th)
     for j=1:length(inlier_ratios)
         best_model(:, i, j, mi) = calc_RANSAC_model(test_data(:,:,i,j), sample_size, no_outlier_prob, inlier_th(i), inlier_ratios(j));
     end
 end
+run_times(mi) = toc;
 
 
-%% R-RANSAC
+%R-RANSAC
 
 mi = 2;
+tic;
 for i=1:length(inlier_th)
     for j=1:length(inlier_ratios)
         best_model(:, i, j, mi) = calc_R_RANSAC_model(test_data(:,:,i,j), sample_size, no_outlier_prob, inlier_th(i), inlier_ratios(j));
     end
 end
+run_times(mi) = toc;
 
 
-%% MSAC
+%MSAC
 
 mi=3;
 
+tic;
 for i=1:length(inlier_th)
     for j=1:length(inlier_ratios)
         best_model(:, i, j, mi) = calc_MSAC_model(test_data(:,:,i,j), sample_size, no_outlier_prob, inlier_th(i), inlier_ratios(j));
     end
 end
+run_times(mi) = toc;
 
+all_run_times = all_run_times + run_times;
+run_time_counter = run_time_counter + 1;
+
+avg_runtimes = all_run_times/run_time_counter;
+
+disp(avg_runtimes);
 
 
 %% Save the mse results to matrix and matrix to csv
