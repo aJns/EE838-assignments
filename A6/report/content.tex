@@ -31,16 +31,50 @@ only 5 iterations. In this case, RANSAC approximation can be very bad. The mean
 squared error of these approximated models compared to the ground truth can
 easily be in the hundreds (>100).
 
-RANSAC functions worse than usual on all the 90\% inlier data sets, but it has
-problems especially with the 0.5 threshold. This seems counter-intuitive,
-considering that in the data set in question, the points are located most
-closely to the ground truth model. Perhaps the few outliers that do exist in
-that data set have an exaggerated effect.
+RANSAC functions worse than usual on all the 90\% inlier data sets. This seems
+counter-intuitive, considering that in the data set in question, the points are
+located most closely to the ground truth model. However, we have to remember
+that because the high percent of inliers, the iteration count is also the
+lowest.
+
+In figure~\ref{fig:circles_RANSAC} we have a set of plots of approximated
+RANSAC circle models, with the data set the models are computed on. As
+mentioned before, the approximated models seem to be worst on the 90\% inlier
+data sets. Even though the data is arranged clearly, we have a big chance of
+sampling bad points, resulting in a bad approximation.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\linewidth]{circles_RANSAC}
+  \caption{RANSAC approximated circle models, with different data sets.}
+\label{fig:circles_RANSAC}
+\end{figure}
+
+Although the data sets with 30\% of inliers have a lot of iterations, ie.\
+chances to get a good model, the data is simply a lot more scattered and harder
+to work with, leading to subpar models. However, they still seem to be better
+than the 90\% inlier models. The best performing models seem to be the ones
+using the 50\% and 70\% inlier data sets. Apparently they hit a sweet spot
+where the data is good enough for approximation, while still doing enough
+iterations to have a chance of finding a good model.
 
 \section{Processing time vs.\ performance}
 
-% TODO: do this last, because it might require adding more code. Which I'm
-% not going to do until I absolutely have to.
+Just from using the iteration function \( N = \frac{\log(1-p)}{\log(1-r^s)} \),
+we can see that increasing the probability p of having at least inlier, the
+number of iterations to be calculated increases. If we make a plot
+p-N~\ref{fig:performance-plot}, we see
+that the number of iterations increases exponentially at around the 90\%
+probability mark. So if we want to optimize between computation performance and
+RANSAC accuracy, the 90\% probability of finding an inlier seems to be optimal.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{performance-plot}
+  \caption{Plot of the iteration count function, with sample size 3, and an
+  inlier ratio of 50\%.}
+\label{fig:performance-plot}
+\end{figure}
 
 \section{Problems with RANSAC}
 
@@ -48,9 +82,7 @@ The main problem with RANSAC is its iterative and random nature; It's not
 guaranteed to find an optimal, or even a good solution. That is why it's
 important to ensure that the number of iterations is enough to find a workable
 solution. It's also not a deterministic algorithm, which is obvious considering
-the random sampling.
-
-It can also be difficult to find good threshold and probability parameters for
-a specific problem.
+the random sampling.  It can also be difficult to find good threshold and
+probability parameters for a specific problem.
 
 \section{Comparison of the RANSAC algorithms}
