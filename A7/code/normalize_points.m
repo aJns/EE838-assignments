@@ -2,8 +2,8 @@ function [points_hat, T] = normalize_points(points)
 
 n = size(points, 1);
 
-x = points(:,1);
-y = points(:,2);
+x = points(1,:);
+y = points(2,:);
 
 x_mean = mean(x);
 y_mean = mean(y);
@@ -17,4 +17,4 @@ t_x = -s*x_mean;
 t_y = -s*y_mean;
 
 T = [s 0 t_x; 0 s t_y; 0 0 1];
-points_hat = (T*points')';
+points_hat = (T*points);

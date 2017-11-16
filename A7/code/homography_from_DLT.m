@@ -5,7 +5,7 @@ n = size(points1, 1);
 A = zeros(2, 9, n);
 
 for i=1:n
-    A(:,:,i) = compute_A(points1(i,:), points2(i,:));
+    A(:,:,i) = compute_A(points1(:,i), points2(:,i));
 end
 
 new_A = zeros(2*n, 9);
