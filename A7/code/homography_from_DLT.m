@@ -17,7 +17,7 @@ end
 
 A = new_A;
 
-[U,S,V] = svd(A);
+[~,~,V] = svd(A);
 
 h = V(:,end);
 H = reshape(h, [3 3])';
