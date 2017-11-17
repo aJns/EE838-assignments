@@ -5,8 +5,8 @@ close all
 I1 = rgb2gray(imread(fullfile('..', 'images', 'H1_ex1.png')));
 I2 = rgb2gray(imread(fullfile('..', 'images', 'H1_ex2.png')));
 
-points1 = detectHarrisFeatures(I1);
-points2 = detectHarrisFeatures(I2);
+points1 = detectSURFFeatures(I1);
+points2 = detectSURFFeatures(I2);
 
 [features1,valid_points1] = extractFeatures(I1,points1);
 [features2,valid_points2] = extractFeatures(I2,points2);
@@ -20,7 +20,7 @@ matchedPoints2 = valid_points2(indexPairs(:,2),:);
 point_count = length(matchedPoints1.Location);
 
 N = 500;
-T_DIST = 50;
+T_DIST = 30;
 MAX_inlier = -1;
 MIN_std = 10e5;
 p = 0.99;
@@ -69,31 +69,21 @@ refined_H = estimate_from_inliers(matched_points1(best_inlier_indices, :), match
 
 
 warning('on','all');
-close all
-
-tform = projective2d(best_H');
-
-figure; imshow(imwarp(I1, tform));
-
-inlier_points1 = matched_points1(best_inlier_indices,1:2);
-inlier_points2 = matched_points2(best_inlier_indices,1:2);
-
-figure;
-showMatchedFeatures(I1, I2, inlier_points1, inlier_points2, 'montage', 'PlotOptions', {'yo','y+','g-'});
 
 %% figures
 close all
 
-% interest points
+% original image 1
 figure; imshow(I1);
-hold on;
-plot(points1);
+
+% interest points
+im1 = insertMarker(I1, points1, 'circle');
+im2 = insertMarker(I2, points2, 'circle');
+
+figure; imshowpair(im1, im2, 'montage');
 
 % correspondence
 figure; showMatchedFeatures(I1,I2,matchedPoints1,matchedPoints2);
-hold on;
-showMatchedFeatures(I1,I2,matchedPoints1,matchedPoints2, 'PlotOptions', {'ro','g+','y-'});
-hold off;
 
 
 % TODO: visualize outliers
@@ -112,15 +102,21 @@ outlier_points2 = matched_points2(outlier_indices,1:2);
 figure;
 showMatchedFeatures(I1, I2, outlier_points1, outlier_points2, 'PlotOptions', {'yo','y+','r-'});
 
+
 % ransac
 
-tform = projective2d(best_H');
+tform = projective2d(best_H^(-1)');
+best_warp = imwarp(I2, tform);
 
-figure; imshow(imwarp(I1, tform));
+figure; imshow(best_warp);
 
 
 % optimal estimation with all inliers
 
-tform = projective2d(refined_H');
+tform = projective2d(refined_H^(-1)');
+refined_warp = imwarp(I2, tform);
 
-figure; imshow(imwarp(I1, tform));
+figure; imshow(refined_warp);
+
+
+
