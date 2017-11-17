@@ -1,6 +1,6 @@
 function [points_hat, T] = normalize_points(points) 
 
-n = size(points, 1);
+n = size(points, 2);
 
 x = points(1,:);
 y = points(2,:);

@@ -5,8 +5,8 @@ close all
 I1 = rgb2gray(imread(fullfile('..', 'images', 'H1_ex1.png')));
 I2 = rgb2gray(imread(fullfile('..', 'images', 'H1_ex2.png')));
 
-points1 = detectSURFFeatures(I1);
-points2 = detectSURFFeatures(I2);
+points1 = detectHarrisFeatures(I1);
+points2 = detectHarrisFeatures(I2);
 
 [features1,valid_points1] = extractFeatures(I1,points1);
 [features2,valid_points2] = extractFeatures(I2,points2);
@@ -20,7 +20,7 @@ matchedPoints2 = valid_points2(indexPairs(:,2),:);
 point_count = length(matchedPoints1.Location);
 
 N = 500;
-T_DIST = 10e+3;
+T_DIST = 0.5e+3;
 MAX_inlier = -1;
 MIN_std = 10e5;
 p = 0.99;
@@ -44,18 +44,17 @@ for i=1:N
     [inlier_indices, inlier_std] = count_inliers(matched_points1, matched_points2, homography, T_DIST);
     inlier_count = length(inlier_indices);
 
-    if inlier_count >= MAX_inlier
-        if inlier_count > MAX_inlier
-            MAX_inlier = inlier_count;
-            best_H = homography;
-            best_inlier_indices = inlier_indices;
-        end
+    if inlier_count > MAX_inlier
+        MAX_inlier = inlier_count;
+        MIN_std = inlier_std;
+        best_H = homography;
+        best_inlier_indices = inlier_indices;
+    end
 
-        if inlier_std < MIN_std
-            MIN_std = inlier_std;
-            best_H = homography;
-            best_inlier_indices = inlier_indices;
-        end
+    if inlier_count == MAX_inlier && inlier_std < MIN_std
+        MIN_std = inlier_std;
+        best_H = homography;
+        best_inlier_indices = inlier_indices;
     end
 
     if inlier_count > 0
@@ -65,12 +64,17 @@ for i=1:N
 
 end
 
-% TODO: should use a LMA loss function
-refined_H = calc_normalized_DLT(matched_points1(:, best_inlier_indices), matched_points2(:, best_inlier_indices));
+% refined H from all inliers
+refined_H = estimate_from_inliers(matched_points1(:, best_inlier_indices), matched_points2(:, best_inlier_indices), best_H);
+
 
 warning('on','all');
-
 close all
+
+tform = projective2d(best_H');
+
+figure; imshow(imwarp(I1, tform));
+
 inlier_points1 = matched_points1(1:2,best_inlier_indices)';
 inlier_points2 = matched_points2(1:2,best_inlier_indices)';
 
@@ -81,8 +85,9 @@ showMatchedFeatures(I1, I2, inlier_points1, inlier_points2, 'montage', 'PlotOpti
 close all
 
 % interest points
-J = insertMarker(I1,corners,'circle');
-figure; imshow(J);
+figure; imshow(I1);
+hold on;
+plot(points1);
 
 % correspondence
 figure; showMatchedFeatures(I1,I2,matchedPoints1,matchedPoints2);

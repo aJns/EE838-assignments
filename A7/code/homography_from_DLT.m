@@ -1,6 +1,6 @@
 function H = homography_from_DLT(points1, points2) 
 
-n = size(points1, 1);
+n = size(points1, 2);
 
 A = zeros(2, 9, n);
 
