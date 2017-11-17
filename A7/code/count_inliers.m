@@ -1,9 +1,11 @@
 function [inlier_indices, inlier_std] = count_inliers(points1, points2, homography, threshold)
 
-inlier_indices = zeros(1, length(points1));
-inlier_distances = -ones(1, length(points1));
+n = size(points1, 1);
 
-for i=1:length(points1)
+inlier_indices = zeros(n, 1);
+inlier_distances = -ones(n, 1);
+
+for i=1:n
     d = calc_distance(points1(i,:), points2(i,:), homography);
     if d < threshold
         inlier_indices(i) = i;

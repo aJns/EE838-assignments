@@ -2,8 +2,8 @@ close all
 
 
 %% find interest points and matches
-I1 = rgb2gray(imread(fullfile('..', 'images', 'H1_ex1.png')));
-I2 = rgb2gray(imread(fullfile('..', 'images', 'H1_ex2.png')));
+I1 = rgb2gray(imread(fullfile('..', 'images', 'H2_ex1.png')));
+I2 = rgb2gray(imread(fullfile('..', 'images', 'H2_ex2.png')));
 
 points1 = detectSURFFeatures(I1);
 points2 = detectSURFFeatures(I2);
@@ -20,7 +20,7 @@ matchedPoints2 = valid_points2(indexPairs(:,2),:);
 point_count = length(matchedPoints1.Location);
 
 N = 500;
-T_DIST = 30;
+T_DIST = 450;
 MAX_inlier = -1;
 MIN_std = 10e5;
 p = 0.99;
