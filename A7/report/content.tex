@@ -1,5 +1,36 @@
 \section{Implementation steps}
 
+First we have to find the interest points. I do this using the built-in
+Computer Vision Toolbox, and its ``detectSURFFeatures'' function.
+For putative feature correspondences I also use the built-in toolbox, and its
+``matchFeatures'' function.
+
+After we have obtained the interest points and putative correspondences, we can
+proceed to use the RANSAC algorithm to try and find the inlier matches. 
+First we randomly select 4 correspondences. We check them for collinearity; If
+they are collinear, we randomly select another 4 correspondences, until we find
+4 correspondences that aren't collinear.
+
+We calculate a homography from the correspondences using the normalized DLT
+method. We then count how many of the correspondences conform to this
+homography. The conformance is calculated by transforming a point from a
+correspondence pair by the homography, and calculating the distance to the
+actual second point, and vice verse, and summing the distance. This is also
+called a symmetric transfer error. For the inlier calculation I use a distance threshold
+of 450. We also calculate the standard deviation of distances.
+
+We then compare the number of inliers to the previous best; If we have more
+inliers, the current homography and number of inliers is recorded as the best.
+In the special case where the inlier count is the same as the previous best but
+the standard deviation of distances is better, ie.\ smaller, we record that as
+the new best result. At the end of the cycle we calculate a new N, which is the
+number of iterations to calculate.
+
+After the RANSAC algorithm has finished we should have a homography that
+performs decently. However, we also use the recorded inliers to calculate the
+optimal homography using the Levenberg-Marquadt algorithm to minimize the
+error.
+
 
 \section{Results}
 
