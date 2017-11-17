@@ -20,7 +20,7 @@ matchedPoints2 = valid_points2(indexPairs(:,2),:);
 point_count = length(matchedPoints1.Location);
 
 N = 500;
-T_DIST = 0.5e+3;
+T_DIST = 50;
 MAX_inlier = -1;
 MIN_std = 10e5;
 p = 0.99;
@@ -28,18 +28,18 @@ sample_size = 4;
 best_H = eye(3);
 best_inlier_indices = [];
 
-matched_points1 = [matchedPoints1.Location, ones(point_count, 1)]';
-matched_points2 = [matchedPoints2.Location, ones(point_count, 1)]';
+matched_points1 = [matchedPoints1.Location, ones(point_count, 1)];
+matched_points2 = [matchedPoints2.Location, ones(point_count, 1)];
 
 warning('off','all');
 
 for i=1:N
     
     indices = randi([1, point_count], sample_size, 1);
-    while are_points_collinear(matched_points1(1:2, indices))
+    while are_points_collinear(matched_points1(indices, 1:2))
         indices = randi([1, point_count], sample_size, 1);
     end
-    homography = calc_normalized_DLT(matched_points1(:, indices), matched_points2(:,indices));
+    homography = calc_normalized_DLT(matched_points1(indices, :), matched_points2(indices, :));
 
     [inlier_indices, inlier_std] = count_inliers(matched_points1, matched_points2, homography, T_DIST);
     inlier_count = length(inlier_indices);
@@ -65,7 +65,7 @@ for i=1:N
 end
 
 % refined H from all inliers
-refined_H = estimate_from_inliers(matched_points1(:, best_inlier_indices), matched_points2(:, best_inlier_indices), best_H);
+refined_H = estimate_from_inliers(matched_points1(best_inlier_indices, :), matched_points2(best_inlier_indices, :), best_H);
 
 
 warning('on','all');
@@ -75,8 +75,8 @@ tform = projective2d(best_H');
 
 figure; imshow(imwarp(I1, tform));
 
-inlier_points1 = matched_points1(1:2,best_inlier_indices)';
-inlier_points2 = matched_points2(1:2,best_inlier_indices)';
+inlier_points1 = matched_points1(best_inlier_indices,1:2);
+inlier_points2 = matched_points2(best_inlier_indices,1:2);
 
 figure;
 showMatchedFeatures(I1, I2, inlier_points1, inlier_points2, 'montage', 'PlotOptions', {'yo','y+','g-'});
@@ -100,14 +100,14 @@ hold off;
 % TODO: get outliers in addition to inliers
 outlier_indices = setdiff(1:point_count, best_inlier_indices);
 
-inlier_points1 = matched_points1(1:2,best_inlier_indices)';
-inlier_points2 = matched_points2(1:2,best_inlier_indices)';
+inlier_points1 = matched_points1(best_inlier_indices,1:2);
+inlier_points2 = matched_points2(best_inlier_indices,1:2);
 
 figure;
 showMatchedFeatures(I1, I2, inlier_points1, inlier_points2, 'PlotOptions', {'yo','y+','g-'});
 
-outlier_points1 = matched_points1(1:2,outlier_indices)';
-outlier_points2 = matched_points2(1:2,outlier_indices)';
+outlier_points1 = matched_points1(outlier_indices,1:2);
+outlier_points2 = matched_points2(outlier_indices,1:2);
 
 figure;
 showMatchedFeatures(I1, I2, outlier_points1, outlier_points2, 'PlotOptions', {'yo','y+','r-'});

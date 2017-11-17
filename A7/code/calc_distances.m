@@ -1,12 +1,10 @@
-function distances = calc_distances(points1, points2, homography) 
+function distances = calc_distances(points1, points2, homography)
 
-%homography = reshape(homography_vector, 3, 3);
-
-N = size(points1, 2);
-distances = zeros(1, N);
+N = size(points1, 1);
+distances = zeros(N,1);
 
 for i=1:N
-    distances(1,i) = calc_distance(points1(:,i), points2(:,i), homography);
+    distances(i) = calc_distance(points1(i,:), points2(i,:), homography);
 end
 
 

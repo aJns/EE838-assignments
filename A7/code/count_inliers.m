@@ -4,7 +4,7 @@ inlier_indices = zeros(1, length(points1));
 inlier_distances = -ones(1, length(points1));
 
 for i=1:length(points1)
-    d = calc_distance(points1(:,i), points2(:,i), homography);
+    d = calc_distance(points1(i,:), points2(i,:), homography);
     if d < threshold
         inlier_indices(i) = i;
         inlier_distances(i) = d;
