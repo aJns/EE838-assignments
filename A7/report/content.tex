@@ -2,8 +2,7 @@
 
 First we have to find the interest points. I do this using the built-in
 Computer Vision Toolbox, and its ``detectSURFFeatures'' function.
-For putative feature correspondences I also use the built-in toolbox, and its
-``matchFeatures'' function.
+For putative feature correspondences I created a simple SSD algorithm.
 
 After we have obtained the interest points and putative correspondences, we can
 proceed to use the RANSAC algorithm to try and find the inlier matches. 

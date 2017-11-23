@@ -5,13 +5,15 @@ close all
 I1 = rgb2gray(imread(fullfile('..', 'images', 'H2_ex1.png')));
 I2 = rgb2gray(imread(fullfile('..', 'images', 'H2_ex2.png')));
 
+% matlab toolbox
 points1 = detectSURFFeatures(I1);
 points2 = detectSURFFeatures(I2);
 
 [features1,valid_points1] = extractFeatures(I1,points1);
 [features2,valid_points2] = extractFeatures(I2,points2);
 
-indexPairs = matchFeatures(features1,features2);
+% find correspondences using ssd similarity measure
+indexPairs = find_correspondences(features1,features2);
 
 matchedPoints1 = valid_points1(indexPairs(:,1),:);
 matchedPoints2 = valid_points2(indexPairs(:,2),:);
@@ -20,7 +22,7 @@ matchedPoints2 = valid_points2(indexPairs(:,2),:);
 point_count = length(matchedPoints1.Location);
 
 N = 500;
-T_DIST = 450;
+T_DIST = 500;
 MAX_inlier = -1;
 MIN_std = 10e5;
 p = 0.99;
