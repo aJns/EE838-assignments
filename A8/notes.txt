@@ -19,3 +19,12 @@ Distortion:            kc = [ -0.29040   0.36843   0.00032   0.00054  0.00000 ] 
 Pixel error:          err = [ 0.51943   0.35333 ]
 
 Note: The numerical errors are approximately three times the standard deviations (for reference).
+
+
+Calibration results after recomputing corners
+
+Focal Length:          fc = [ 657.48040   657.93987 ] +/- [ 0.37682   0.40757 ]
+Principal point:       cc = [ 302.57943   242.35496 ] +/- [ 0.74700   0.73371 ]
+Skew:             alpha_c = [ 0.00000 ] +/- [ 0.00000  ]   => angle of pixel axes = 90.00000 +/- 0.00000 degrees
+Distortion:            kc = [ -0.25430   0.11808   -0.00031   -0.00009  0.00000 ] +/- [ 0.00298   0.01268   0.00016   0.00016  0.00000 ]
+Pixel error:          err = [ 0.12547   0.11997 ]
