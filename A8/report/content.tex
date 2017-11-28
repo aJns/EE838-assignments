@@ -44,6 +44,27 @@ After the initialization step of the calibration, we only have the
 \textbf{focal length} and \textbf{principal point} intrinsic parameters. They
 are presented in the table~\ref{tab:init_param}
 
+\begin{description}
+
+  \item[Focal length] describes the lens' ability to bend light. It's defined
+    as the distance from the lens to the point where the light going through
+    the lens is focused. In the results it's given as a vector of two values;
+    One defines the horizontal focal length, the other the vertical.
+
+    In photography (and computer vision), focal length determines the
+    magnification and angle of view, and thus also the ``degree of
+    perspective'', ie.\ how pronounced the perspective is.
+
+  \item[Principal point] if we imagine a straigth line coming from the center
+    of the camera, the principal point is the point where that line intersects
+    the image plane. The focal length is also measured from this point.
+
+    It's very hard to measure accurately, according to the calibration toolbox
+    instructions, so it's often better to just assume it to be the image
+    center.
+
+\end{description}
+
 
 \begin{table}[h]
   \centering
@@ -66,6 +87,18 @@ focal lenght, principal point, and their uncertainties, we get the camera
 \textbf{distortion} and \textbf{pixel error} (and their uncertainties). The
 final results (after grid corner recomputation and a second calibration) can be
 found in the table~\ref{tab:optim_param}
+
+\begin{description}
+
+  \item[Distortions] the radial and tangential distortion coefficients.
+    Describes the distorting effects of the camera's lens.
+
+  \item[Pixel error] the standard deviation of the reprojection error in x and
+    y directions.
+
+  \item[Skew coefficient] describes the shape of the camera's pixels.
+
+\end{description}
 
 \begin{table}[h]
   \centering
@@ -113,26 +146,14 @@ error, and figure~\ref{fig:extrinsic} has the extrinsic parameters in a 3D plot.
   \caption{Visualization of extrinsic parameters}\label{fig:extrinsic}
 \end{figure}
 
-\section{Explanation of parameters}
-
-% TODO: explain the concepts of focal lenght, principal point, distortion and
-% pixel error
-% TODO:maybe explain the reprojection error and extrinsic parameters, or like,
-% whats the point about visualizing them
 \begin{description}
 
-  \item[Focal length]           töttöröö
+  \item[Extrinsic parameters] are matrices which describe the relation
+    between the camera and the calibration grid. Using those matrices, we can
+    visualize the position of the grid in relation to the camera.
 
-  \item[Principal point]        tlttl
-
-  \item[Skew coefficient]       tasda
-
-  \item[Distortions]            asdasd
-
-  \item[Pixel error]            asdafdf
-
-  \item[Extrinsic parameters]   asdasd
-
-  \item[Reprojection error]     asdafdf
+  \item[Reprojection error] is the distance, or error, between a projected
+    point and a measured one. It very effectively describes the quality of the
+    camera model, as a good model will have a smaller error than a bad one.
 
 \end{description}
