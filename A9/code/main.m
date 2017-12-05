@@ -89,8 +89,12 @@ disp('Difference between my calculation and Matlabs version:');
 disp(num2str(immse(matlab_F, best_F)));
 matlab_inlier_count = nnz(matlab_inliers);
 
+
 %% Non-linear estimation
 
+lm_F = estimate_from_inliers(matched_points1(:, best_inlier_indices), matched_points2(:, best_inlier_indices), best_F);
+disp('Difference between LM estimation and Matlabs version:');
+disp(num2str(immse(matlab_F, lm_F)));
 
 
 %% Guided matching
@@ -98,31 +102,36 @@ matlab_inlier_count = nnz(matlab_inliers);
 
 
 %% Visualization
-% 
-% figure(1); clf;
-% % imshow(orig_I1);
-% % hold on;
-% epiLines = epipolarLine(best_F', matched_points1(1:2, inlier_indices)');
-% points = lineToBorderPoints(epiLines, size(orig_I2)+1000);
-% line(points(:,[1,3])',points(:,[2,4])');
-% hold on;
-% imshow(orig_I2);
+
+close all;
+
+figure(1);
+imshow(cat(2, orig_I1, orig_I2));
+hold on;
+epiLines = epipolarLine(best_F', matched_points2(1:2, inlier_indices)');
+points = lineToBorderPoints(epiLines, size(orig_I1));
+line(points(:,[1,3])', points(:,[2,4])');
+
+epiLines = epipolarLine(best_F, matched_points1(1:2, inlier_indices)');
+points = lineToBorderPoints(epiLines, size(orig_I2));
+line(points(:,[1,3])' + size(I1, 2), points(:,[2,4])');
+hold off;
 
 
-figure(2) ; clf ;
-% imshow(cat(2, orig_I1, orig_I2)) ;
-imshow(orig_I1) ;
+figure(2);
+imshow(cat(2, orig_I1, orig_I2)) ;
+% imshow(orig_I1) ;
 
 % x2 = keypoints2(1,matches(2,:)) + size(I1, 2) ;
 x1 = matched_points1(1, best_inlier_indices);
-x2 = matched_points2(1, best_inlier_indices);%+ size(I1, 2);
+x2 = matched_points2(1, best_inlier_indices) + size(I1, 2);
 y1 = matched_points1(2, best_inlier_indices);
 y2 = matched_points2(2, best_inlier_indices);
 
 hold on;
 h = line([x1 ; x2], [y1 ; y2]) ;
 set(h,'linewidth', 1, 'color', 'b') ;
-plot(x1, y1, 'b*');
+% plot(x1, y1, 'b*');
 hold off;
 
 
