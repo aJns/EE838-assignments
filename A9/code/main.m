@@ -25,8 +25,8 @@ matches = vl_ubcmatch(descriptors1, descriptors2);
 %% RANSAC
 point_count = length(matches);
 
-N = 500;
-T_DIST = 1e3;
+N = 300;
+T_DIST = 500;
 MAX_inlier = -1;
 MIN_std = 10e5;
 p = 0.99;
@@ -75,11 +75,6 @@ for i=1:N
 
     end
 
-%    if inlier_count > 0
-%        outlier_ratio = 1 - inlier_count/point_count;
-%        N = log(1-p)/log(1-(1-outlier_ratio)^sample_size);
-%    end
-
 end
 
 disp('Finished RANSAC');
@@ -99,6 +94,21 @@ disp(num2str(immse(matlab_F, lm_F)));
 
 %% Guided matching
 
+point_length1 = length(keypoints1);
+point_length2 = length(keypoints1);
+
+indices1 = setdiff(1:point_length1, matches(1,:));
+indices2 = setdiff(1:point_length2, matches(2,:));
+
+c_keypoints1 = keypoints1(1:2, indices1);
+c_keypoints2 = keypoints2(1:2, indices2);
+c_descriptors1 = descriptors1(:, indices1);
+c_descriptors2 = descriptors2(:, indices2);
+
+
+disp('Starting guided matching...');
+guided_matches = match_using_elines(lm_F, c_keypoints1, c_descriptors1, c_keypoints2, c_descriptors2);
+disp('Finished guided matching');
 
 
 %% Visualization
@@ -108,16 +118,17 @@ close all;
 figure(1);
 imshow(cat(2, orig_I1, orig_I2));
 hold on;
-epiLines = epipolarLine(best_F', matched_points2(1:2, inlier_indices)');
+epiLines = epipolarLine(lm_F', matched_points2(1:2, inlier_indices)');
 points = lineToBorderPoints(epiLines, size(orig_I1));
 line(points(:,[1,3])', points(:,[2,4])');
 
-epiLines = epipolarLine(best_F, matched_points1(1:2, inlier_indices)');
+epiLines = epipolarLine(lm_F, matched_points1(1:2, inlier_indices)');
 points = lineToBorderPoints(epiLines, size(orig_I2));
 line(points(:,[1,3])' + size(I1, 2), points(:,[2,4])');
 hold off;
 
 
+%%
 figure(2);
 imshow(cat(2, orig_I1, orig_I2)) ;
 % imshow(orig_I1) ;
@@ -135,15 +146,20 @@ set(h,'linewidth', 1, 'color', 'b') ;
 hold off;
 
 
-% x1 = matched_points1(1, matlab_inliers);
-% x2 = matched_points2(1, matlab_inliers) + size(I1, 2);
-% y1 = matched_points1(2, matlab_inliers);
-% y2 = matched_points2(2, matlab_inliers);
-% 
-% hold on;
-% h = line([x1 ; x2], [y1 ; y2]) ;
-% set(h,'linewidth', 1, 'color', 'y') ;
-% hold off;
+%%
+figure(3);
+imshow(cat(2, orig_I1, orig_I2)) ;
+% imshow(orig_I1) ;
 
+x1 = keypoints1(1, guided_matches(1,:));
+x2 = keypoints2(1, guided_matches(2,:)) + size(I1, 2);
+y1 = keypoints1(2, guided_matches(1,:));
+y2 = keypoints2(2, guided_matches(2,:));
+
+hold on;
+h = line([x1 ; x2], [y1 ; y2]) ;
+set(h,'linewidth', 1, 'color', 'y') ;
+% plot(x1, y1, 'b*');
+hold off;
 
 
