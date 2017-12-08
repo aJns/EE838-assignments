@@ -18,16 +18,3 @@ I2 = single(orig_I2);
 
 F = estimate_F_from_images(I1, I2);
 
-
-
-%% RANSAC
-
-
-%% Non-linear estimation from all inliers
-
-
-%% Guided matching
-
-
-%% visualizations
-

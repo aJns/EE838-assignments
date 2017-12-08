@@ -10,8 +10,7 @@ matched_points2 = [keypoints2(1:2, matches(2,:)); ones(1, match_count)];
 
 [ransac_F, ransac_inliers] = estimate_RANSAC_F(matched_points1, matched_points2);
 
-F = ransac_F;
-
 % Non-linear estimation from all inliers
+F = LM_estimate_F(ransac_F, matched_points1(:, ransac_inliers), matched_points2(:, ransac_inliers));
 
 % guided matching
