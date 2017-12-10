@@ -44,7 +44,7 @@ plot_inliers_outliers(I1, I2, inliers, outliers);
 
 %% Get E => R & T
 
-E = K'*F*K; % not getting the right results
+E = K'*F*K;
 
 [U,S,V] = svd(E);
 W = [0  -1  0;
@@ -52,13 +52,34 @@ W = [0  -1  0;
      0  0   1];
 Z = [0  1   0;
      -1 0   0;
-     0  0   0[;
+     0  0   0];
 
-T = U*Z*U';
+Tx = U*Z*U';
+T = [Tx(3,2); Tx(1,3); Tx(2,1)];
 R = U*W*V';
+
+
+%% Get projection matrices
+
+P1 = K*[eye(3) zeros(3,1)];
+P2 = K*[R T]; 
 
 
 %% Triangulation
 
+pts_3d = triangulate_points(P1, P2, inliers(1:3,:), inliers(4:6,:));
 
-%% 
+c_pts_3d = pts_3d(1:3,:)./pts_3d(4,:);
+
+%% Visualize points
+
+point_cloud = pointCloud(c_pts_3d');
+max_distance = 0.02;
+[model,inlierIndices,outlierIndices] = pcfitplane(point_cloud, max_distance);
+plane = select(point_cloud,inlierIndices);
+
+figure;
+pcshow(plane);
+
+
+
