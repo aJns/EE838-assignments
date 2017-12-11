@@ -1,3 +1,5 @@
+\section{Must know}
+
 \subsection{Line equation}
 
 If the normal vector is (a,b) and given a point (c,d), the line equation is
@@ -5,8 +7,6 @@ If the normal vector is (a,b) and given a point (c,d), the line equation is
 
 
 \subsection{Matrix properties}
-
--We have to know the DoF and rank of every matrices and why
 
 \subsubsection{Homography matrix}
 H has 8 degrees of freedom because it's defined up to scale.
@@ -48,7 +48,18 @@ vector), 3 for R (rotation matrix).
 
 \subsection{Describing a conic}
 
--Know how to describe a conic with a matrix
+The general conic in 3 dimensions is given by
+\[ax^2 + bxy + cy^2 + dxz + eyz + fz^2 = 0\]
+which can be written using 2D homogeneous coordinates as
+\[boldsymbol{x}^T C \boldsymbol{x} = 0\]
+where
+\[ C = \begin{bmatrix}
+        a   &   b/2     &   d/2     \\
+        b/2 &   c       &   e/2     \\
+        d/2 &   e/2     &   f       
+    \end{bmatrix}
+\]
+5 DoF because up to scale
 
 
 \subsection{Calculating the camera matrix}
@@ -88,4 +99,21 @@ vector), 3 for R (rotation matrix).
 
 \subsection{Line \& plane transformations}
 
--Know line/plane transformation
+\subsubsection{Transformation of lines}
+
+Under a point transformation \( x_i' = H x_i \)
+\[ l'^T x_i' = l^T H^{-1} x_i = 0 \]
+\[ l' = H^{-T} l \]
+
+\subsubsection{Transformation of conics}
+
+Under a point transformation \( x_i' = H x_i \)
+\[ x^T C x = x'^T {[H^{-1}]}^T C H^{-1} x' 
+    = x'^T H^{-T} C H^{-1} x'
+\]
+which is a quadratic form \( x'^T C' x' \) with \(C' = H^{-T} C H^{-1} \)
+
+Under a point transformation \( x' = H x \), a conic C transforms to \( C' =
+H^{-T} C H^{-1} \)
+
+\section{Important bits by lecture}
