@@ -1,352 +1,91 @@
-\section{Equations}
+\subsection{Line equation}
 
-\subsection{Harris eqs}
-Cornerness
-\[
-E(u,v) = \sum w(x,y)[I(x+u,y+v)-I(x,y)]^2
-\]
+If the normal vector is (a,b) and given a point (c,d), the line equation is
+\(a(x-c) + b(y-d)=0\)
 
-Taylor series 2D first order approx
-\[
-    f(x+u,y+v) \approx f(x,y)+(uf_x(x,y)+vf_y(x,y))
-\]
 
-Harris Corner Derivation
-\[
-    \sum [I(x+u,y+v)-I(x,y)]^2
-\]
-Use first order approx to get:
-\[
-    \sum u^2 I_x^2 + 2uvI_xI_y + v^2I_y^2
-\]
-Written in a matrix equation this is:
-\[
-    \begin{bmatrix}
-        u & v
-    \end{bmatrix}
-    =
-    (\sum
-        \begin{bmatrix}
-            I_x^2 & I_x I_y \\
-            I_x I_y & I_y^2
-        \end{bmatrix}
-    )
-    \begin{bmatrix}
-        u \\
-        v
-    \end{bmatrix}
-\]
-The quadratic approx simplifies to:
-\[
-    E=(u,v) \cong [u,v] M
-    \begin{bmatrix}
-        u \\
-        v
-    \end{bmatrix}
-\]
-Where M is a 2x2 matrix computed from image derivatives:
-\[
-    M = \sum w(x,y)
-    \begin{bmatrix}
-        I_x^2 & I_xI_y \\
-        I_xI_y & I_y^2
-    \end{bmatrix}
-\]
-Harris corner response can be measure from the eigenvalues of M;
-If both \(\lambda_1\) and \(\lambda_2\) are great, it's a corner. If only one
-is, it's an edge. If both are smol, it's a flat area.
-Eigenvalues are however slow to compute, so the following function can be used
-instead:
-\[
-    R = det M - k(trace M)^2
-\]
-because
-\[
-    det M = \lambda_1 \lambda_2
-\]
-\[
-    trace M = \lambda_1 + \lambda_2
-\]
-k is an empirical constant
+\subsection{Matrix properties}
 
-\subsection{finding edges, scale space}
-Sobel operator, common approx of DoG
-\[
-    S_x = 
-    \begin{bmatrix}
-        -1 & 0 & 1 \\
-        -2 & 0 & 2 \\
-        -1 & 0 & 1
-    \end{bmatrix}
-\]
-\[
-    S_y = 
-    \begin{bmatrix}
-        1 & 2 & 1 \\
-        0 & 0 & 0 \\
-        -1 & -2 & -2
-    \end{bmatrix}
-\]
+-We have to know the DoF and rank of every matrices and why
 
-Second derivative of Gaussian = Laplacian of Gaussian
+\subsubsection{Homography matrix}
+H has 8 degrees of freedom because it's defined up to scale.
+2 for scale, 2 for rotation, 2 for translation, 2 for ``line at infinity'' to
+finite. Has rank 3.
 
-Laplacian image:
-\[
-    f = L_{Kernel} * Image
-\]
-Kernel:
-\[
-    L = \sigma^2 (G_{xx}(x, y, \sigma) + G_{yy}(x,y,\sigma))
-\]
-Where Gaussian:
-\[
-    G(x,y,\sigma)=\frac{1}{\sqrt{2\pi\sigma}}e^{-\frac{x^2 + y^2}{2\sigma^2}}
-\]
+\subsubsection{Isometry matrix}
+Has 3 DoF, 1 rotation, 2 translation
 
-DoG Pyramid:
-\[
-    \begin{split}
-    D(x,y,\sigma) =
-    (G(x,y,k\sigma)-G(x,y,\sigma))*I(x,y) \\
-    =L(x,y,k\sigma)-L(x,y,\sigma)
-    \end{split}
-\]
+\subsubsection{Similarity matrix}
+4 DoF, 1 scale, 1 rotation, 2 translation
 
-Laplacian of Gaussian
-\[
-    LoG(x,y,t)=-\frac{1}{\pi t^2}(1-\frac{x^2+y^2}{2t})e^{-\frac{x^2 + y^2}{2t}}
-\]
+\subsubsection{Affine matrix}
+6 DoF, 2 scale, 2 rotation, 2 translation
 
-\subsection{SIFT}
-The Hessian matrix can be defined as 
-\[
-    H_{i,j} = \frac{\partial^2 f}{\partial x_i \partial x_j}
-\]
-In SIFT, keypoints that do not satisfy the following equation are eliminated,
-because they are on the edge, and thus not as valuable as corner points.
-\[
-    \frac{trace(H)^2}{det(H)} < \frac{(r+1)^2}{r}
-\]
+\subsubsection{Fundamental matrix}
+Has 7 DoF. 1 DoF is subtracted because it's defined up to scale, 1 because it's
+a rank 2 matrix. Because F is singular, it can't be of rank 3. Because it
+represents a mapping from a 2d to a 1d projective space, it has to be of rank
+2.
 
-\subsection{Nonlinear scale space}
-Nonlinear diffusion filtering
-\[
-    \frac{\partial L}{\partial t} = div(c(x,y,t)*\nabla L)
-\]
-Where c is the conductivity function, which enables adaptation to the image
-structure. t is the scale parameter, larger values lead to simpler images.
+\subsubsection{Essential matrix}
+The essential matrix has 5 DoF. It's a product of the camera translation and
+rotation matrices, which bot have 3 DoF. However, there's scale ambiguity, thus
+E has only 5 DoF. E has rank 2, because it is constructed from the translation
+matrix, which has rank 2.
 
-AOS (Additive Operator Splitting) schemes, which are used for iteratively
-constructing nonlinear scale spaces
-\[
-    L^{i+1} = (I-\tau \sum_{t=1}^m A_l (L^i))^{-1} L^i
-\]
+\subsubsection{Camera (projection) matrix, and its parts}
+A \textit{general} projective camera has rank 3, and 11 DoF.
+``
+The rank 3 requirement arises because if the rank is less
+than this then the range of the matrix mapping will be a
+line or point and not the whole plane; in other words not
+a 2D image.
+''
+P has 11 DoF, 5 for K (intrinsic params), 3 for \textbf{t} (translation
+vector), 3 for R (rotation matrix).
 
-FED (Fast Explicit Diffusion) is a faster way to construct the scale space
-Given \textit{a priori} \(L^{i+1,0} = L^i\), a FED cycle is:
-\[
-    L^{i+1,j+1}=(I+\tau_j A(L^i))L^{i+1,j}, j=0\cdots n-1, i={0\cdots M}
-\]
-The main idea is to perform M cycles of n explicit diffusion steps with varying
-step sizes \(\tau_j\):
-\[
-    \tau_j = \frac{\tau_{max}}{2cos^2(\pi\frac{2j+1}{4n+2}}
-\]
 
-\subsection{Loss equations for CNN based descriptors and pipelines}
+\subsection{Describing a conic}
 
-Hinge loss for L2 distance metric. \(p_1 \text{\&} p_2\) are patches, C is upper bound
-loss.
-\[
-    l(x_1,x_2) = 
-    \begin{cases}
-        \lVert D(x_1) - D(x_2) \rVert{}_2, & p_1=p_2 \\
-        max(0, C - \lVert D(x_1) - D(x_2) \rVert{}_2), & p_1 \neq p_2
-    \end{cases}
-\]
+-Know how to describe a conic with a matrix
 
-Overall loss function for end-to-end pipeline
-\[
-    \mathcal{L}(p_i) = \lVert g(p_i^1, f_w(p_i^1)) -g(p_i^2, f_w(p_i^2))
-    \rVert_2^2
-\]
-\(f_w(p_i^*)\) = orientation for patch p of ith pair \\
-g(p,x) = patch descriptor for patch p, rotated to x degree \\
-Training makes \(f_w(p_i^*)\) converges to an orientation estimator pointing to
-the dominant direction of patch p.
 
-\subsubsection{TILDE losses}
+\subsection{Calculating the camera matrix}
 
-Loss 1: classification-like loss
-\[
-    \mathcal{L}_c(\omega) = \gamma_c \lVert\omega\rVert_2^2 + \frac{1}{K}
-    \sum_{i=1}^2 max(0,1 -y_i F(x_i;\omega))^2
-\]
-For the ith sample xi, induce F(xi;w) to be close to +1 for positive samples
-(yi = +1) and -1 for negative samples (yi = -1)
-
-Loss 2: shape regularizer loss, to normalize the response for positive samples
-\[
-    \mathcal{L}_s(\omega) = \frac{\gamma_s}{K_p} \sum_{i\lvert y_i = +1} 
-    \sum_{n} \lVert w_{n\eta_i(n)} * x_i (w_{n\eta_i(n)}^T x_i)h\rVert_2^2
-\]
-\[
-    h(x,y) = e^{\alpha(1-\frac{\sqrt{x^2 + y^2}}{S})}-1
-\]
-
-Loss 3: temporal regularizer loss, to enforce repeatability of varying
-illumination conditions
-\[
-    \mathcal{L}_t(\omega) = \frac{\gamma_t}{K} \sum_{i=1}^K
-    \sum_{j\in\mathcal{N}_i} (F(x_i;\omega) - F(x_j;\omega))^2
-\]
-
-\subsection{RANSAC}
-
-RANSAC iteration count
-\[
-    N = \frac{\log(1-p)}{\log(1-(1-\epsilon)^s)}
-\]
-p = success rate, prob that at least one sample has no outliers \\
-\(\epsilon\) = outlier ration \\
-s = sample size, line 2, circle 3
-
-Error, or orthogonal distance between point and line
-\[
-    d_i = \frac{\lvert ax_i -y_i + b \rvert}{\sqrt{a^2 + 1^2}}
-\]
-
-Circle equation
-\[
-    (x-a)^2 + (y-b)^2 = r^2
-\]
-circle error
-\[
-    d_i = \lvert\sqrt{(x_i-a)^2 + (y_i -b)^2}-r\rvert
-\]
-
-\section{Algorithm evaluation criteria}
-
-\begin{description}
-    \item [Repeatability]
-        The geometric stability of detected interests points between different
-        images of the given scene under varying conditions --- Detect the same
-        point independently in both images
-    \item [Distinctiveness/informativeness]
-        If all descriptors lie close together, their information content is
-        low. Spread out descriptors have more information content. --- reliable
-        matching of corresponding point
-    \item [Localization accuracy]
-        How accurately an interest point can be located at a specific 2D
-        location. --- where exactly is the point
-\end{description}
-
-Recall and precision:
-\[
-    \text{recall} = \frac{\lvert\text{\{relevant
-    documents\}}\cap\text{\{retrieved documents\}}\rvert}
-    {\lvert\text{\{relevant documents\}}\rvert}
-\]
-\[
-    \text{precision} = \frac{\lvert\text{\{relevant
-    documents\}}\cap\text{\{retrieved documents\}}\rvert}
-    {\lvert\text{\{retrieved documents\}}\rvert}
-\]
-
-\section{Algorithm steps}
-
-\subsection{Harris}
 \begin{enumerate}
-    \item Compute x and y derivatives of image
-    \item Compute products of derivatives at every pixel
-    \item Compute the sums of the products of derivatives at each pixel
-    \item Define at each pixel the Hessian matrix
-    \item Compute the response of the detector at each pixel
-    \item Threshold on value of R. Compute nonmax suppression.
+    \item Get F
+    \item Get K, and K' if different cameras were used
+    \item Get E from \(E = K^T F K\)
+    \item Get R and \textbf{t}
+        \begin{enumerate}
+            \item Get SVD of E \[ [U, \Sigma, V] = \operatorname{SVD}(E) \]
+            \item define W and Z
+                \[
+                    W = \begin{bmatrix}
+                        0   &   -1  & 0 \\
+                        1   &   0   & 0 \\
+                        0   &   0   & 1
+                    \end{bmatrix}
+                    Z = \begin{bmatrix}
+                        0   &   1   & 0 \\
+                        -1  &   0   & 0 \\
+                        0   &   0   & 0
+                    \end{bmatrix}
+                \]
+            \item Get \( {[T]}_x = U Z U^T\)
+            \item Get \(\boldsymbol{t} = \begin{bmatrix}
+                        {[T]}_x(3,2) \\
+                        {[T]}_x(1,3) \\
+                        {[T]}_x(2,1)
+                \end{bmatrix}\)
+            \item Get \(R = U W V^T\)
+        \end{enumerate}
+    \item Get \( P = K [R | \boldsymbol{t}] \)
 \end{enumerate}
 
-\subsection{SIFT}
-\begin{enumerate}
-    \item 
-Search for potential points of interest by creation of a
-Difference of Gaussian (DoG) scale-space pyramid as image
-representation and filtering for extreme values.
-
-    \item
-Further filtering and reduction of the obtained points from 1. to
-select stable points with high contrast. To each remaining
-point, its position and size are assigned.
-
-    \item
-Orientation assignment to each point by finding a characteristic
-direction.
-
-    \item
-Feature vector calculation based on the characteristic direction
-from 3. to provide rotation invariance.
-
-    \item
-The whole process is stacked in a way that only a subset of
-elements from the beginning of a stage is passed onto the next
-stage.
-
-\end{enumerate}
-
-\subsection{SURF}
-\begin{enumerate}
-    \item Find image interest points --- Use determinant of Hessian matrix
-    \item Find Major interest points in scale space --- Non-maximum suppression
-        on scaled interest point maps
-    \item Find feature ``direction'' -- We want rotationally invariant features
-    \item Generate feature vectors
-
-\end{enumerate}
-
-\subsection{DAISY}
-Mostly differs in its sampling pattern, which consists of concentric circles.
-
-\subsection{Binary descriptors}
-The point of binary descriptors is to describe the feature with a series of
-pixel pairs around the keypoint. If we have 512 pairs, we usually get a 512 bit
-binary string. The values of the string are gotten by comparing the pairs; For
-example, if we compare intensity gradients, the value is 1 if the second
-pixel's gradient is lower, and 0 if it is higher, or something like that.
-
-\begin{description}
-    \item [BRIEF] Random sampling pairs
-    \item [ORB] Orientation calculation using moments, learned sampling pairs
-    \item [BRISK] Sampling pattern is concentric circles, with more points on
-        outer rings. Orientation calc by comparing gradients of long pairs.
-        Sampling pairs are only short pairs.
-    \item [FREAK] Overlapping concentric circles with more points on the inner
-        rings. Orientation calc by comparing gradients of preselected 45 pairs.
-        Learned sampling pairs.
-\end{description}
-
-\subsection{Advanced methods}
-Non-linear scale space --- Intensity Order Pooling --- Using multiple scales --
-learned descriptors, DNN or trad\. machine learning.
 
 
+\subsection{Line \& plane transformations}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-Know line/plane transformation
