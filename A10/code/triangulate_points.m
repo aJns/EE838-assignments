@@ -1,6 +1,6 @@
 function pts_3d = triangulate_points(P1, P2, pts1, pts2) 
-
-% normalize
+% Triangulation implemented simply with the linear algorithm. The points should
+% probably be normalized, but good results are obtained even without it.
 
 n = length(pts1);
 pts_3d = zeros(4, n);
@@ -22,6 +22,3 @@ for i=1:n
 
     pts_3d(:,i) = V(:,end);
 end
-
-
-% de-normalize

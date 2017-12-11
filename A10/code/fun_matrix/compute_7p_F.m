@@ -5,6 +5,7 @@ function F = compute_7p_F(points1, points2)
 [norm_pts2, T2] = normalize_points(points2);
 
 
+% Form A matrix
 A = [norm_pts2(1,:).*norm_pts1(1,:);
      norm_pts2(1,:).*norm_pts1(2,:);
      norm_pts2(1,:);
@@ -46,6 +47,7 @@ end
 
 
 function [normalized, T] = normalize_points(points)
+% normalize points
 
 centroid = mean(points(1:2,:), 2);
 

@@ -1,4 +1,5 @@
 function errors = calculate_errors(F, points1, points2) 
+% Calculates Sampson error for all points
 
 n = length(points1);
 errors = zeros(1, n);

@@ -1,4 +1,5 @@
 function [matched_points1, matched_points2] = get_matched_pts(I1, I2) 
+% function to extract matches using vl_feat
 
 [keypoints1, descriptors1] = vl_sift(I1);
 [keypoints2, descriptors2] = vl_sift(I2);

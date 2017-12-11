@@ -1,4 +1,5 @@
 function [F, inliers, outliers] = estimate_F_from_images(I1, I2) 
+% Wrap F estimation in one convenient function
 
 [matched_points1, matched_points2] = get_matched_pts(I1, I2);
 
